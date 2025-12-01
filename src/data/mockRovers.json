@@ -1,0 +1,177 @@
+[
+  {
+    "id": "RVR-001",
+    "name": "Rover Alpha",
+    "status": "active",
+    "battery": 85,
+    "location": {
+      "lat": 40.7128,
+      "lng": -74.0060
+    },
+    "speed": 12.5,
+    "lastUpdate": "2024-01-15T10:30:00Z",
+    "route": [
+      { "lat": 40.7128, "lng": -74.0060 },
+      { "lat": 40.7148, "lng": -74.0080 },
+      { "lat": 40.7168, "lng": -74.0100 },
+      { "lat": 40.7188, "lng": -74.0120 }
+    ],
+    "currentOrder": "ORD-12345",
+    "deliveryProgress": 65
+  },
+  {
+    "id": "RVR-002",
+    "name": "Rover Beta",
+    "status": "idle",
+    "battery": 45,
+    "location": {
+      "lat": 40.7580,
+      "lng": -73.9855
+    },
+    "speed": 0,
+    "lastUpdate": "2024-01-15T10:25:00Z",
+    "route": [],
+    "currentOrder": null,
+    "deliveryProgress": 0
+  },
+  {
+    "id": "RVR-003",
+    "name": "Rover Gamma",
+    "status": "active",
+    "battery": 92,
+    "location": {
+      "lat": 40.7589,
+      "lng": -73.9851
+    },
+    "speed": 15.2,
+    "lastUpdate": "2024-01-15T10:29:00Z",
+    "route": [
+      { "lat": 40.7589, "lng": -73.9851 },
+      { "lat": 40.7609, "lng": -73.9831 },
+      { "lat": 40.7629, "lng": -73.9811 }
+    ],
+    "currentOrder": "ORD-12346",
+    "deliveryProgress": 42
+  },
+  {
+    "id": "RVR-004",
+    "name": "Rover Delta",
+    "status": "problem",
+    "battery": 22,
+    "location": {
+      "lat": 40.7489,
+      "lng": -73.9680
+    },
+    "speed": 0,
+    "lastUpdate": "2024-01-15T10:15:00Z",
+    "route": [],
+    "currentOrder": "ORD-12347",
+    "deliveryProgress": 30
+  },
+  {
+    "id": "RVR-005",
+    "name": "Rover Epsilon",
+    "status": "active",
+    "battery": 78,
+    "location": {
+      "lat": 40.7614,
+      "lng": -73.9776
+    },
+    "speed": 10.8,
+    "lastUpdate": "2024-01-15T10:28:00Z",
+    "route": [
+      { "lat": 40.7614, "lng": -73.9776 },
+      { "lat": 40.7634, "lng": -73.9756 },
+      { "lat": 40.7654, "lng": -73.9736 }
+    ],
+    "currentOrder": "ORD-12348",
+    "deliveryProgress": 55
+  },
+  {
+    "id": "RVR-006",
+    "name": "Rover Zeta",
+    "status": "idle",
+    "battery": 100,
+    "location": {
+      "lat": 40.7282,
+      "lng": -73.9942
+    },
+    "speed": 0,
+    "lastUpdate": "2024-01-15T10:20:00Z",
+    "route": [],
+    "currentOrder": null,
+    "deliveryProgress": 0
+  },
+  {
+    "id": "RVR-007",
+    "name": "Rover Eta",
+    "status": "active",
+    "battery": 68,
+    "location": {
+      "lat": 40.7484,
+      "lng": -73.9857
+    },
+    "speed": 14.3,
+    "lastUpdate": "2024-01-15T10:29:30Z",
+    "route": [
+      { "lat": 40.7484, "lng": -73.9857 },
+      { "lat": 40.7504, "lng": -73.9837 },
+      { "lat": 40.7524, "lng": -73.9817 },
+      { "lat": 40.7544, "lng": -73.9797 }
+    ],
+    "currentOrder": "ORD-12349",
+    "deliveryProgress": 75
+  },
+  {
+    "id": "RVR-008",
+    "name": "Rover Theta",
+    "status": "active",
+    "battery": 55,
+    "location": {
+      "lat": 40.7306,
+      "lng": -73.9352
+    },
+    "speed": 11.7,
+    "lastUpdate": "2024-01-15T10:27:00Z",
+    "route": [
+      { "lat": 40.7306, "lng": -73.9352 },
+      { "lat": 40.7326, "lng": -73.9332 }
+    ],
+    "currentOrder": "ORD-12350",
+    "deliveryProgress": 88
+  },
+  {
+    "id": "RVR-009",
+    "name": "Rover Iota",
+    "status": "idle",
+    "battery": 33,
+    "location": {
+      "lat": 40.7412,
+      "lng": -73.9891
+    },
+    "speed": 0,
+    "lastUpdate": "2024-01-15T10:10:00Z",
+    "route": [],
+    "currentOrder": null,
+    "deliveryProgress": 0
+  },
+  {
+    "id": "RVR-010",
+    "name": "Rover Kappa",
+    "status": "active",
+    "battery": 91,
+    "location": {
+      "lat": 40.7580,
+      "lng": -73.9690
+    },
+    "speed": 13.9,
+    "lastUpdate": "2024-01-15T10:30:00Z",
+    "route": [
+      { "lat": 40.7580, "lng": -73.9690 },
+      { "lat": 40.7600, "lng": -73.9670 },
+      { "lat": 40.7620, "lng": -73.9650 }
+    ],
+    "currentOrder": "ORD-12351",
+    "deliveryProgress": 38
+  }
+]
