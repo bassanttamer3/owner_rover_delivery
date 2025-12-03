@@ -14,9 +14,9 @@ L.Icon.Default.mergeOptions({
 // Custom marker icons based on rover status
 const createCustomIcon = (status) => {
   const colors = {
-    active: '#10b981', // green
-    idle: '#eab308', // yellow
-    problem: '#ef4444', // red
+    active: '#10b981', 
+    idle: '#eab308', 
+    problem: '#ef4444',
   };
 
   const color = colors[status] || colors.active;
@@ -64,25 +64,16 @@ const MapUpdater = ({ selectedRover }) => {
 };
 
 const MapPanel = ({ rovers, selectedRover, onMarkerClick }) => {
-  // Calculate center point from all rovers
-  const defaultCenter =
-    rovers.length > 0
-      ? [
-          rovers.reduce((sum, r) => sum + r.location.lat, 0) / rovers.length,
-          rovers.reduce((sum, r) => sum + r.location.lng, 0) / rovers.length,
-        ]
-      : [37.7749, -122.4194]; // Default to San Francisco
-
   return (
     <div className="h-full w-full rounded-lg overflow-hidden shadow-md">
       <MapContainer
-        center={defaultCenter}
-        zoom={12}
+        center={[26.8206, 30.8025]} // Egypt
+        zoom={6} 
         className="h-full w-full"
         scrollWheelZoom={true}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; OpenStreetMap contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
