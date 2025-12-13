@@ -1,6 +1,6 @@
 import { Mail, ShieldCheck, User } from "lucide-react";
 
-const Profile = () => {
+const profile = () => {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Page Title */}
@@ -61,4 +61,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default profile;
