@@ -3,13 +3,11 @@ import { Mail, ShieldCheck, User } from "lucide-react";
 const Profile = () => {
   return (
     <div className="p-6 max-w-4xl mx-auto">
-
       {/* Page Title */}
       <h1 className="text-2xl font-semibold mb-6">My Profile</h1>
 
       {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow-sm border p-6 flex gap-6">
-
         {/* Avatar */}
         <div className="flex flex-col items-center w-40">
           <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
@@ -22,7 +20,6 @@ const Profile = () => {
 
         {/* Info */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-
           {/* Name */}
           <div>
             <label className="text-sm text-gray-500">Full Name</label>
@@ -52,7 +49,6 @@ const Profile = () => {
               Active
             </span>
           </div>
-
         </div>
       </div>
 
@@ -61,7 +57,6 @@ const Profile = () => {
         To update your password or security settings, go to
         <span className="text-green-600 font-medium"> Settings</span>.
       </p>
-
     </div>
   );
 };
