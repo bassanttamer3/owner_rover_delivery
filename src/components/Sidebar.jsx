@@ -2,7 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Grid,
   MapPin,
+  BarChart,
   Truck,
   Package,
   Bell,
@@ -16,7 +18,7 @@ import { cn } from '@/lib/utils';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Main', path: '/' },
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: BarChart, label: 'Dashboard', path: '/dashboard' },
   { icon: MapPin, label: 'Live Tracking', path: '/live-tracking' },
   { icon: Truck, label: 'Rovers', path: '/rovers' },
   { icon: Package, label: 'Orders', path: '/orders' },

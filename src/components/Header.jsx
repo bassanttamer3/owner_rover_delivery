@@ -1,13 +1,15 @@
 import React from 'react';
-import { Search, Bell, User, Menu, X, Sun, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Bell, User, X, Sun, Moon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useApp } from '@/contexts/AppContext';
 
 const Header = () => {
+  const navigate = useNavigate(); 
   const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode } = useApp();
-  
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-background border-b border-border z-50 shadow-sm transition-colors duration-300">
       <div className="flex items-center justify-between h-full px-6">
@@ -63,13 +65,25 @@ const Header = () => {
             )}
           </button>
 
-          <Button variant="ghost" size="icon" className="relative">
+          {/* Notifications */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative"
+            onClick={() => navigate('/notifications')}
+          >
             <Bell className="w-5 h-5" />
             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-destructive-foreground text-xs">
               3
             </Badge>
           </Button>
-          <Button variant="ghost" size="icon">
+
+          {/* Profile */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/profile')} 
+          >
             <User className="w-5 h-5" />
           </Button>
         </div>
