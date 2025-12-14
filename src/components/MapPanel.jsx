@@ -1,116 +1,79 @@
-import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import React, { useEffect, useState, useMemo } from "react";
+import { GoogleMap, Marker, Polyline, useJsApiLoader } from "@react-google-maps/api";
 
-// Fix default marker icons
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-});
+const containerStyle = { width: "100%", height: "100%" };
 
-// Custom marker icons based on rover status
-const createCustomIcon = (status) => {
-  const colors = {
-    active: '#10b981', 
-    idle: '#eab308', 
-    problem: '#ef4444',
+const createMarkerIcon = (status) => {
+  const colors = { active: "green", idle: "orange", problem: "red" };
+  return {
+    path: window.google.maps.SymbolPath.CIRCLE,
+    fillColor: colors[status] || "green",
+    fillOpacity: 1,
+    strokeWeight: 2,
+    strokeColor: "white",
+    scale: 10,
   };
-
-  const color = colors[status] || colors.active;
-
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `
-      <div style="
-        background-color: white;
-        border: 3px solid ${color};
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      ">
-        <div style="
-          background-color: ${color};
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-        "></div>
-      </div>
-    `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-  });
 };
 
-// Component to update map view when a rover is selected
-const MapUpdater = ({ selectedRover }) => {
-  const map = useMap();
+const MapPanelGoogle = ({ rovers, selectedRover, onMarkerClick }) => {
+  const { isLoaded } = useJsApiLoader({ googleMapsApiKey: "YOUR_API_KEY" });
+  const [moveIndex, setMoveIndex] = useState(0);
+
+  useEffect(() => setMoveIndex(0), [selectedRover?.id]);
 
   useEffect(() => {
-    if (selectedRover) {
-      map.flyTo([selectedRover.location.lat, selectedRover.location.lng], 15, {
-        duration: 1.5,
-      });
+    if (!selectedRover?.route?.length) return;
+    const interval = setInterval(() => {
+      setMoveIndex((prev) =>
+        prev < selectedRover.route.length - 1 ? prev + 1 : prev
+      );
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [selectedRover]);
+
+  const movingPosition = useMemo(() => {
+    if (!selectedRover) return null;
+    if (selectedRover.route?.length) {
+      const point = selectedRover.route[moveIndex];
+      return { lat: point.lat, lng: point.lng };
     }
-  }, [selectedRover, map]);
+    return { lat: selectedRover.location.lat, lng: selectedRover.location.lng };
+  }, [selectedRover, moveIndex]);
 
-  return null;
-};
+  if (!isLoaded) return <div>Loading Map...</div>;
 
-const MapPanel = ({ rovers, selectedRover, onMarkerClick }) => {
   return (
-    <div className="h-full w-full rounded-lg overflow-hidden shadow-md">
-      <MapContainer
-        center={[26.8206, 30.8025]} // Egypt
-        zoom={6} 
-        className="h-full w-full"
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={movingPosition || { lat: 26.8206, lng: 30.8025 }}
+      zoom={6}
+      options={{ streetViewControl: false, mapTypeControl: false }}
+    >
+      {/* Route Line */}
+      {selectedRover?.route?.length > 0 && (
+        <Polyline
+          path={selectedRover.route.map((p) => ({ lat: p.lat, lng: p.lng }))}
+          options={{ strokeColor: "#10b981", strokeWeight: 4 }}
         />
+      )}
 
-        <MapUpdater selectedRover={selectedRover} />
-
-        {rovers.map((rover) => (
-          <React.Fragment key={rover.id}>
-            <Marker
-              position={[rover.location.lat, rover.location.lng]}
-              icon={createCustomIcon(rover.status)}
-              eventHandlers={{
-                click: () => onMarkerClick(rover),
-              }}
-            >
-              <Popup>
-                <div className="text-sm">
-                  <p className="font-semibold">{rover.name}</p>
-                  <p className="text-xs text-gray-600">{rover.id}</p>
-                  <p className="text-xs mt-1">Battery: {rover.battery}%</p>
-                  <p className="text-xs">Status: {rover.status}</p>
-                </div>
-              </Popup>
-            </Marker>
-
-            {selectedRover?.id === rover.id && rover.route.length > 0 && (
-              <Polyline
-                positions={rover.route.map((point) => [point.lat, point.lng])}
-                color="#10b981"
-                weight={3}
-                opacity={0.7}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </MapContainer>
-    </div>
+      {/* Rovers */}
+      {rovers.map((rover) => {
+        const position =
+          selectedRover?.id === rover.id && movingPosition
+            ? movingPosition
+            : { lat: rover.location.lat, lng: rover.location.lng };
+        return (
+          <Marker
+            key={rover.id}
+            position={position}
+            icon={createMarkerIcon(rover.status)}
+            onClick={() => onMarkerClick(rover)}
+          />
+        );
+      })}
+    </GoogleMap>
   );
 };
 
-export default MapPanel;
+export default MapPanelGoogle;

@@ -1,13 +1,13 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, Bell, User, X, Sun, Moon } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useApp } from '@/contexts/AppContext';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, Bell, User, X, Sun, Moon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useApp } from "@/contexts/AppContext";
 
 const Header = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode } = useApp();
 
   return (
@@ -17,7 +17,7 @@ const Header = () => {
         <button
           onClick={toggleSidebar}
           className="w-10 h-10 rounded-xl border-2 border-primary bg-background flex flex-col items-center justify-center gap-1 hover:bg-primary/10 hover:scale-105 transition-all duration-200 shadow-sm"
-          aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
         >
           {isSidebarOpen ? (
             <X className="w-5 h-5 text-primary" />
@@ -32,10 +32,10 @@ const Header = () => {
 
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-lg shadow-md">
-            <span className="text-primary-foreground font-bold text-lg">OR</span>
-          </div>
-          <h1 className="text-xl font-bold text-foreground">Owner Rover Delivery</h1>
+          <img src="logo.png" alt="OR" className="w-10 h-10" />
+          <h1 className="text-xl font-bold text-foreground">
+            ROVEX
+          </h1>
         </div>
 
         {/* Search Bar */}
@@ -70,7 +70,7 @@ const Header = () => {
             variant="ghost"
             size="icon"
             className="relative"
-            onClick={() => navigate('/notifications')}
+            onClick={() => navigate("/notifications")}
           >
             <Bell className="w-5 h-5" />
             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-destructive-foreground text-xs">
@@ -82,7 +82,7 @@ const Header = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/profile')} 
+            onClick={() => navigate("/profile")}
           >
             <User className="w-5 h-5" />
           </Button>

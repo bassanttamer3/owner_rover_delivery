@@ -40,7 +40,9 @@ const MainPage = () => {
       icon: MapPin,
       title: "Live Tracking",
       description: "Real-time rover location monitoring",
-      stats: `${mockRovers.filter((r) => r.status === "active").length} Active Rovers`,
+      stats: `${
+        mockRovers.filter((r) => r.status === "active").length
+      } Active Rovers`,
       route: "/live-tracking",
     },
     {
@@ -67,19 +69,34 @@ const MainPage = () => {
   ];
 
   const pieData = [
-    { name: "Active", value: mockRovers.filter((r) => r.status === "active").length },
-    { name: "Idle", value: mockRovers.filter((r) => r.status === "idle").length },
-    { name: "Problem", value: mockRovers.filter((r) => r.status === "problem").length },
+    {
+      name: "Active",
+      value: mockRovers.filter((r) => r.status === "active").length,
+    },
+    {
+      name: "Idle",
+      value: mockRovers.filter((r) => r.status === "idle").length,
+    },
+    {
+      name: "Problem",
+      value: mockRovers.filter((r) => r.status === "problem").length,
+    },
   ];
 
-  const COLORS = ["#34D399", "#FBBF24", "#F87171"];
+  const COLORS = ["#2ec8cf", "#FBBF24", "#F87171"]; // Updated active color
 
   return (
     <div className="space-y-12 pb-12">
       {/* Hero Section */}
-      <section className="relative w-full h-[500px] rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-primary/5 to-background flex gap-6">
+      <section className="relative w-full h-[500px] rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-[#2ec8cf]/5 to-background flex gap-6">
         <div className="flex-1 rounded-2xl overflow-hidden">
-          <MapPanel rovers={mockRovers} selectedRover={null} onMarkerClick={() => {}} />
+          <div className="h-full">
+            <MapPanel
+              rovers={mockRovers}
+              selectedRover={null}
+              onMarkerClick={() => {}}
+            />
+          </div>
         </div>
 
         <div className="w-80 space-y-4">
@@ -90,10 +107,10 @@ const MainPage = () => {
               <Badge
                 className={`${
                   rover.status === "active"
-                    ? "bg-success text-success-foreground"
+                    ? "bg-[#2ec8cf] text-white"
                     : rover.status === "idle"
-                    ? "bg-warning text-warning-foreground"
-                    : "bg-destructive text-destructive-foreground"
+                    ? "bg-yellow-500 text-yellow-900"
+                    : "bg-red-500 text-white"
                 } my-2`}
               >
                 {rover.status.toUpperCase()}
@@ -101,22 +118,28 @@ const MainPage = () => {
               <div className="space-y-1">
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Battery</span>
-                  <span className="font-bold text-foreground">{rover.battery}%</span>
+                  <span className="font-bold text-foreground">
+                    {rover.battery}%
+                  </span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                   <div
-                    className="bg-primary h-full rounded-full transition-all duration-300"
+                    className="bg-[#2ec8cf] h-full rounded-full transition-all duration-300"
                     style={{ width: `${rover.battery}%` }}
                   />
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground mt-1">
                   <span>Speed</span>
-                  <span className="font-bold text-foreground">{rover.speed || 0} mph</span>
+                  <span className="font-bold text-foreground">
+                    {rover.speed || 0} mph
+                  </span>
                 </div>
                 {rover.currentOrder && (
                   <div className="mt-1">
                     <span className="text-sm text-muted-foreground">Order</span>
-                    <p className="font-medium text-foreground">{rover.currentOrder}</p>
+                    <p className="font-medium text-foreground">
+                      {rover.currentOrder}
+                    </p>
                   </div>
                 )}
                 <p className="text-xs text-muted-foreground mt-1">
@@ -135,25 +158,31 @@ const MainPage = () => {
           return (
             <Card
               key={index}
-              className="group hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 bg-gradient-to-br from-background to-primary/5"
+              className="group hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 hover:border-[#2ec8cf]/50 bg-gradient-to-br from-background to-[#2ec8cf]/5"
               onClick={() => navigate(box.route)}
             >
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                    <Icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
+                  <div className="w-14 h-14 rounded-xl bg-[#2ec8cf]/10 flex items-center justify-center group-hover:bg-[#2ec8cf] group-hover:scale-110 transition-all duration-300">
+                    <Icon className="w-7 h-7 text-[#2ec8cf] group-hover:text-white transition-colors" />
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-foreground mb-1">{box.title}</h3>
-                  <p className="text-sm text-muted-foreground">{box.description}</p>
+                  <h3 className="text-lg font-bold text-foreground mb-1">
+                    {box.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {box.description}
+                  </p>
                 </div>
                 <div className="pt-2 border-t border-border">
-                  <p className="text-sm font-semibold text-primary">{box.stats}</p>
+                  <p className="text-sm font-semibold text-[#2ec8cf]">
+                    {box.stats}
+                  </p>
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground group-hover:shadow-md transition-all"
+                  className="w-full border-[#2ec8cf] text-[#2ec8cf] hover:bg-[#2ec8cf] hover:text-white group-hover:shadow-md transition-all"
                 >
                   Show More
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -168,7 +197,9 @@ const MainPage = () => {
       <section className="space-y-8 pt-8">
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-foreground">Fleet Insights</h2>
-          <p className="text-muted-foreground mt-1">Get a quick overview of your fleet performance today</p>
+          <p className="text-muted-foreground mt-1">
+            Get a quick overview of your fleet performance today
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -182,8 +213,8 @@ const MainPage = () => {
             if (type === "active") {
               count = mockRovers.filter((r) => r.status === "active").length;
               label = "Active Rovers";
-              colorFrom = "from-green-100";
-              colorTo = "to-green-200";
+              colorFrom = "from-[#2ec8cf]/10";
+              colorTo = "to-[#2ec8cf]/20";
               Icon = Truck;
             } else if (type === "idle") {
               count = mockRovers.filter((r) => r.status === "idle").length;
@@ -210,12 +241,12 @@ const MainPage = () => {
                 key={idx}
                 className={`p-6 rounded-2xl bg-gradient-to-tr ${colorFrom} ${colorTo} shadow-lg flex flex-col items-center gap-2`}
               >
-                <Icon className="w-10 h-10 text-primary" />
+                <Icon className="w-10 h-10 text-[#2ec8cf]" />
                 <p className="text-3xl font-bold text-foreground">{count}</p>
                 <span className="text-sm text-muted-foreground">{label}</span>
                 <div className="w-full h-2 bg-muted rounded-full mt-2">
                   <div
-                    className="h-full bg-primary rounded-full transition-all"
+                    className="h-full bg-[#2ec8cf] rounded-full transition-all"
                     style={{
                       width: `${(count / mockRovers.length) * 100}%`,
                     }}
@@ -235,25 +266,33 @@ const MainPage = () => {
               cx="50%"
               cy="50%"
               outerRadius={80}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+              label={({ name, percent }) =>
+                `${name} ${(percent * 100).toFixed(0)}%`
+              }
               labelLine={false}
             >
               {pieData.map((entry, index) => (
-                <Cell key={index} fill={COLORS[index]} stroke="#fff" strokeWidth={2} />
+                <Cell
+                  key={index}
+                  fill={COLORS[index]}
+                  stroke="#fff"
+                  strokeWidth={2}
+                />
               ))}
             </Pie>
             <Tooltip formatter={(value) => [value, "Rovers"]} />
           </PieChart>
-
-         </div>
+        </div>
 
         {/* CTA */}
         <div
-          className="bg-primary/10 p-6 rounded-2xl text-center shadow-md hover:shadow-lg transition cursor-pointer"
+          className="bg-[#2ec8cf]/10 p-6 rounded-2xl text-center shadow-md hover:shadow-lg transition cursor-pointer"
           onClick={() => navigate("/dashboard")}
         >
-          <h3 className="text-lg font-bold text-primary">Go to Dashboard</h3>
-          <p className="text-sm text-muted-foreground">View detailed stats and manage your fleet</p>
+          <h3 className="text-lg font-bold text-[#2ec8cf]">Go to Dashboard</h3>
+          <p className="text-sm text-muted-foreground">
+            View detailed stats and manage your fleet
+          </p>
         </div>
       </section>
 
@@ -261,12 +300,17 @@ const MainPage = () => {
       <section className="space-y-8 pt-12">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <Users className="w-8 h-8 text-primary" />
-            <h2 className="text-4xl font-bold text-foreground">About Our Team</h2>
+            <Users className="w-8 h-8 text-[#2ec8cf]" />
+            <h2 className="text-4xl font-bold text-foreground">
+              About Our Team
+            </h2>
           </div>
-          <div className="h-1 w-24 bg-gradient-to-r from-primary to-primary/50 rounded-full mx-auto mb-6"></div>
+          <div className="h-1 w-24 bg-gradient-to-r from-[#2ec8cf] to-[#2ec8cf]/50 rounded-full mx-auto mb-6"></div>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            We are the Owner Rover Delivery Team, dedicated to revolutionizing autonomous delivery systems. Our team combines expertise in robotics, software engineering, and logistics to create efficient, reliable, and innovative delivery solutions for the modern world.
+            We are the Owner Rover Delivery Team, dedicated to revolutionizing
+            autonomous delivery systems. Our team combines expertise in
+            robotics, software engineering, and logistics to create efficient,
+            reliable, and innovative delivery solutions for the modern world.
           </p>
         </div>
 
@@ -274,17 +318,19 @@ const MainPage = () => {
           {teamMembers.map((member, index) => (
             <Card
               key={index}
-              className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-background to-primary/5"
+              className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-2 hover:border-[#2ec8cf]/30 bg-gradient-to-br from-background to-[#2ec8cf]/5"
             >
               <CardContent className="p-6 text-center space-y-4">
-                <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center border-4 border-primary/30 group-hover:border-primary/60 transition-all duration-300 group-hover:scale-110">
-                  <Users className="w-12 h-12 text-primary" />
+                <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-[#2ec8cf]/20 to-[#2ec8cf]/40 flex items-center justify-center border-4 border-[#2ec8cf]/30 group-hover:border-[#2ec8cf]/60 transition-all duration-300 group-hover:scale-110">
+                  <Users className="w-12 h-12 text-[#2ec8cf]" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-foreground text-lg">{member.name}</h4>
+                  <h4 className="font-bold text-foreground text-lg">
+                    {member.name}
+                  </h4>
                   <p className="text-sm text-muted-foreground">{member.role}</p>
                 </div>
-                <div className="w-16 h-1 bg-primary rounded-full mx-auto group-hover:w-full transition-all duration-300"></div>
+                <div className="w-16 h-1 bg-[#2ec8cf] rounded-full mx-auto group-hover:w-full transition-all duration-300"></div>
               </CardContent>
             </Card>
           ))}

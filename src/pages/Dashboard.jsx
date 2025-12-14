@@ -132,7 +132,7 @@ const Dashboard = () => {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="battery" fill="#16a34a" />
+              <Bar dataKey="battery" fill="#2ec8cf" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
