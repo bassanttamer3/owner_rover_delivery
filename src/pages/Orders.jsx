@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Clock, Package, AlertCircle, Truck } from 'lucide-react';
-import mockRovers from '@/data/mockRovers.json';
+import mockRovers from '@/data/mockrovers.json';
 
 const Orders = () => {
   const orders = mockRovers
