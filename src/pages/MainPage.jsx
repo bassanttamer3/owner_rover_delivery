@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import mockRovers from "@/data/mockRovers.json";
 import { useApp } from "@/contexts/AppContext";
 import { Truck, Package, Activity, Users, MapPin } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import Lottie from "lottie-react";
-import mapAnimation from "@/data/mapBrowsing.json";
-import truckNavigation from "@/data/TruckNavigation.json";
+import mockRovers from "@/data/mockrovers.json";
+import mapAnimation from "@/data/mapbrowsing.json";
+import truckNavigation from "@/data/trucknavigation.json";
 
 const MainPage = () => {
   const [selectedRover, setSelectedRover] = useState(null);
