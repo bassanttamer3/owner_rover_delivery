@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Truck, Package, Activity, AlertTriangle, Battery, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import mockRoversData from "@/data/mockRovers.json";
+import mockRoversData from "@/data/mockrovers.json";
 
 const Dashboard = () => {
   const [rovers, setRovers] = useState(mockRoversData);
