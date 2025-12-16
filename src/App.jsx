@@ -31,10 +31,10 @@ const App = () => (
           <Sonner />
 
           <Routes>
-            {/* صفحة الـ Login مفتوحة للجميع */}
+            
             <Route path="/login" element={<Login />} />
 
-            {/* كل الصفحات الرئيسية محمية بالـ ProtectedRoute */}
+            
             <Route element={<ProtectedRoute />}>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<MainPage />} />
@@ -49,7 +49,7 @@ const App = () => (
               </Route>
             </Route>
 
-            {/* أي لينك غلط أو الـ root بدون login → روحي على login */}
+            
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -124,7 +124,7 @@ const Settings = () => {
         </CardHeader>
 
         <CardContent>
-          {/* خدعة لتضليل Chrome autofill - حقول مخفية في الأول */}
+          
           <div style={{ display: "none" }}>
             <input type="text" name="fake-username" autoComplete="username" />
             <input type="password" name="fake-password" autoComplete="current-password" />

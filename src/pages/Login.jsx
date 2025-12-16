@@ -42,7 +42,7 @@ const Login = () => {
         return;
       }
 
-      // حفظ التوكنز في sessionStorage (علشان يتمسح لما تقفلي المتصفح)
+      
       sessionStorage.setItem("accessToken", data.data.tokens.access_token);
       sessionStorage.setItem("refreshToken", data.data.tokens.refresh_token);
 
@@ -58,17 +58,17 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* خلفية Gradient أنيقة */}
+      
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-cyan-100" />
 
-      {/* زخرفة خفيفة (دواير blur) */}
+      
       <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-300/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
-      {/* الكارد الرئيسية */}
+      
       <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm z-10">
         <CardHeader className="text-center space-y-8 pb-10">
-          {/* اللوجو من public/logo.png */}
+          
           <div className="flex justify-center">
             <img
               src="/logo.png"

@@ -13,11 +13,11 @@ const Dashboard = () => {
       setRovers(prev =>
         prev.map(r => ({
           ...r,
-          battery: Math.max(0, r.battery - Math.floor(Math.random() * 5)), // تقليل البطارية عشوائي
-          status: Math.random() > 0.95 ? "problem" : r.status // أحيانًا مشكلة
+          battery: Math.max(0, r.battery - Math.floor(Math.random() * 5)), 
+          status: Math.random() > 0.95 ? "problem" : r.status 
         }))
       );
-    }, 5000); // كل 5 ثواني
+    }, 5000); 
 
     return () => clearInterval(interval);
   }, []);
