@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import RoverCard from "@/components/RoverCard";
 import MapPanel from "@/components/MapPanel";
-import mockRovers from "@/data/mockRovers.json";
+import mockRovers from "@/data/mockrovers.json";
 import { useApp } from "@/contexts/AppContext";
 import { Card } from "@/components/ui/card";
 
