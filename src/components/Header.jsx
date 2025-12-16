@@ -43,9 +43,12 @@ const Header = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              type="search"
+              type="text" /* ← تم تغييره من "search" إلى "text" */
               placeholder="Search rovers, orders..."
               className="pl-10 bg-muted/50 border-border focus:bg-background transition-colors"
+              
+              /* ← خدعة إضافية للمتصفحات العنيدة (خاصة Chrome) */
+              autoComplete="search-rovers"
             />
           </div>
         </div>

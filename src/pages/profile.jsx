@@ -1,32 +1,27 @@
 import { Mail, ShieldCheck } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 
 const Profile = () => {
-  // Avatar state
+  const navigate = useNavigate(); 
+
+ 
   const [avatar, setAvatar] = useState(null);
   const [showGallery, setShowGallery] = useState(false);
 
   const profilePics = [
-    "pic1.png",
-    "pic2.png",
-    "pic3.png",
-    "pic4.png",
-    "pic5.png",
-    "pic6.png",
-    "pic7.png",
-    "pic8.png",
-    "pic9.png",
-    "pic10.png",
+    "pic1.png", "pic2.png", "pic3.png", "pic4.png", "pic5.png",
+    "pic6.png", "pic7.png", "pic8.png", "pic9.png", "pic10.png",
     "pic11.png",
   ];
 
-
+  
   useEffect(() => {
     const storedAvatar = localStorage.getItem("selectedAvatar");
     if (storedAvatar) setAvatar(storedAvatar);
   }, []);
 
- 
+  
   const handleAvatarClick = (pic) => {
     setAvatar(pic);
     localStorage.setItem("selectedAvatar", pic);
@@ -109,8 +104,14 @@ const Profile = () => {
 
       {/* Info Note */}
       <p className="text-sm text-gray-500 mt-4">
-        To update your password or security settings, go to
-        <span className="text-[#2ec8cf] font-medium"> Settings</span>.
+        To update your password or security settings, go to{" "}
+        <span
+          className="text-[#2ec8cf] font-medium cursor-pointer"
+          onClick={() => navigate("/settings")} 
+        >
+          Settings
+        </span>
+        .
       </p>
     </div>
   );
