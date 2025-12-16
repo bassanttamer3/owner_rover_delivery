@@ -20,13 +20,13 @@ const Profile = () => {
     "pic11.png",
   ];
 
-  // Load avatar from localStorage عند أول تحميل الصفحة
+
   useEffect(() => {
     const storedAvatar = localStorage.getItem("selectedAvatar");
     if (storedAvatar) setAvatar(storedAvatar);
   }, []);
 
-  // عند اختيار صورة
+ 
   const handleAvatarClick = (pic) => {
     setAvatar(pic);
     localStorage.setItem("selectedAvatar", pic);

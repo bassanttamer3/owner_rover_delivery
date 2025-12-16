@@ -53,7 +53,7 @@ const LiveTracking = () => {
         </div>
 
         {/* Right Panel */}
-        <div className="rounded-2xl border bg-gradient-to-br from-background to-[#2ec8cf]/5 shadow-lg flex flex-col overflow-hidden">
+        <div className="rounded-2xl border bg-gradient-to-br from-background to-primary/5 shadow-lg flex flex-col overflow-hidden">
           {/* Panel Header */}
           <div className="p-5 border-b space-y-4">
             <h2 className="text-xl font-bold">Rovers Control</h2>
@@ -85,7 +85,7 @@ const LiveTracking = () => {
             {/* Mini Stats */}
             <div className="grid grid-cols-3 gap-3">
               <Card className="p-3 text-center">
-                <Truck className="w-5 h-5 mx-auto text-[#2ec8cf] mb-1" />
+                <Truck className="w-5 h-5 mx-auto text-green-600 mb-1" />
                 <p className="text-lg font-bold">
                   {mockRovers.filter((r) => r.status === "active").length}
                 </p>
@@ -93,7 +93,7 @@ const LiveTracking = () => {
               </Card>
 
               <Card className="p-3 text-center">
-                <MapPin className="w-5 h-5 mx-auto text-yellow-500 mb-1" />
+                <MapPin className="w-5 h-5 mx-auto text-yellow-600 mb-1" />
                 <p className="text-lg font-bold">
                   {mockRovers.filter((r) => r.status === "idle").length}
                 </p>
@@ -101,7 +101,7 @@ const LiveTracking = () => {
               </Card>
 
               <Card className="p-3 text-center">
-                <AlertTriangle className="w-5 h-5 mx-auto text-red-500 mb-1" />
+                <AlertTriangle className="w-5 h-5 mx-auto text-red-600 mb-1" />
                 <p className="text-lg font-bold">
                   {mockRovers.filter((r) => r.status === "problem").length}
                 </p>
@@ -118,7 +118,7 @@ const LiveTracking = () => {
                   key={rover.id}
                   className={`transition-all rounded-xl ${
                     selectedRover?.id === rover.id
-                      ? "ring-2 ring-[#2ec8cf]"
+                      ? "ring-2 ring-primary"
                       : ""
                   }`}
                 >
