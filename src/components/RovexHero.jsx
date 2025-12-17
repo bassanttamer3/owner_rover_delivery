@@ -12,7 +12,7 @@ const RovexHero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-rovex-dark" />
         
         {/* City silhouette */}
-        <div className="absolute bottom-20 left-0 right-0 h-64 opacity-25 ">
+        <div className="absolute bottom-20 left-0 right-0 h-64 opacity-20 ">
 
           <svg viewBox="0 0 1200 200" className="w-full h-full" preserveAspectRatio="xMidYMax slice">
             {/* Buildings */}
