@@ -4,14 +4,15 @@ const RovexHero = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <section className="relative w-full min-h-screen overflow-hidden bg-background">
+    <section className="relative w-full min-h-screen overflow-hidden bg-background pt-0">
+
       {/* Background cityscape */}
       <div className="absolute inset-0">
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-rovex-dark" />
         
         {/* City silhouette */}
-        <div className="absolute bottom-8 left-0 right-0 h-64 opacity-20">
+        <div className="absolute bottom-20 left-0 right-0 h-64 opacity-25 ">
 
           <svg viewBox="0 0 1200 200" className="w-full h-full" preserveAspectRatio="xMidYMax slice">
             {/* Buildings */}
@@ -54,7 +55,8 @@ const RovexHero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 lg:px-12 pt-20 lg:pt-32">
+      <div className="relative z-10 container mx-auto px-6 lg:px-12 pt-12 lg:pt-0">
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           
           {/* Left side - Text content */}
