@@ -10,6 +10,8 @@ import Lottie from "lottie-react";
 import mockRovers from "@/data/mockrovers.json";
 import mapAnimation from "@/data/mapbrowsing.json";
 import truckNavigation from "@/data/trucknavigation.json";
+import RovexHero from "@/components/RovexHero";
+
 
 const MainPage = () => {
   const [selectedRover, setSelectedRover] = useState(null);
@@ -64,6 +66,9 @@ const MainPage = () => {
 
   return (
     <div className="space-y-12 pb-12">
+      {/* Hero Animation Section */}
+       <RovexHero />
+
 
       {/* ================= HERO SECTION ================= */}
       <section className="space-y-8">

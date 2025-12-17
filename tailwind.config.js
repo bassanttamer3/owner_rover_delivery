@@ -1,8 +1,8 @@
-import type { Config } from "tailwindcss";
+
 
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
     container: {
@@ -65,6 +65,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        rovex: {
+          cyan: "hsl(var(--rovex-cyan))",
+          "cyan-glow": "hsl(var(--rovex-cyan-glow))",
+          dark: "hsl(var(--rovex-dark))",
+          surface: "hsl(var(--rovex-surface))",
+          metallic: "hsl(var(--rovex-metallic))",
+          sensor: "hsl(var(--rovex-sensor))",
+        },
       },
       boxShadow: {
         sm: "var(--shadow-sm)",
@@ -78,27 +86,61 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        // === Hero Animations ===
+        "rover-float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        "rover-hover": {
+          "0%, 100%": { transform: "translateY(0px) scale(1)" },
+          "50%": { transform: "translateY(-8px) scale(1.02)" },
+        },
+        "wheel-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "road-line": {
+          "0%, 100%": { opacity: 0.2, transform: "translateX(0)" },
+          "50%": { opacity: 1, transform: "translateX(-50px)" },
+        },
+        "float-particle": {
+          "0%, 100%": { transform: "translateY(0px)", opacity: 0.5 },
+          "50%": { transform: "translateY(-10px)", opacity: 1 },
+        },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "1", filter: "blur(0px)" },
+          "50%": { opacity: "0.6", filter: "blur(2px)" },
+        },
+        "pulse-bright": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.4" },
+        },
+        "antenna-pulse": {
+          "0%, 100%": { transform: "scale(1)", boxShadow: "0 0 10px hsl(178 72% 48% / 0.8)" },
+          "50%": { transform: "scale(1.3)", boxShadow: "0 0 20px hsl(178 72% 48% / 1), 0 0 40px hsl(178 72% 48% / 0.5)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        // === Hero Animations ===
+        "rover-float": "rover-float 3s ease-in-out infinite",
+        "rover-hover": "rover-hover 2s ease-in-out infinite",
+        "wheel-spin": "wheel-spin 1s linear infinite",
+        "road-line": "road-line 2s linear infinite",
+        "float-particle": "float-particle 4s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "pulse-bright": "pulse-bright 1.5s ease-in-out infinite",
+        "antenna-pulse": "antenna-pulse 2s ease-in-out infinite",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
