@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RoverCard from "@/components/RoverCard";
 import RoverReportModal from "@/components/RoverReportModal";
-import mockRovers from "@/data/mockRovers.json";
+import mockRovers from "@/data/mockrovers.json";
 
 const Rovers = () => {
   const [searchQuery, setSearchQuery] = useState("");
