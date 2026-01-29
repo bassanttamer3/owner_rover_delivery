@@ -16,7 +16,8 @@ const Orders = () => {
   const orders = mockRovers
     .filter((rover) => rover.currentOrder)
     .map((rover) => ({
-      orderId: rover.currentOrder,
+   
+      orderId: rover.currentOrder.id, 
       roverId: rover.id,
       roverName: rover.name,
       progress: rover.deliveryProgress,
@@ -102,6 +103,7 @@ const Orders = () => {
             {orders.length > 0 ? (
               orders.map((order) => (
                 <TableRow
+                  
                   key={order.orderId}
                   className="hover:bg-muted/10 transition-colors"
                 >
@@ -124,9 +126,11 @@ const Orders = () => {
                     </div>
                   </TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell className="text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    {order.estimatedTime}
+                  <TableCell className="text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      {order.estimatedTime}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Bell, User, X, Sun, Moon } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,12 @@ import { useApp } from "@/contexts/AppContext";
 const Header = () => {
   const navigate = useNavigate();
   const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode } = useApp();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.clear(); // مسح أي بيانات محفوظة
+    navigate("/login");
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-background border-b border-border z-50 shadow-sm transition-colors duration-300">
@@ -33,9 +39,7 @@ const Header = () => {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <img src="logo.png" alt="OR" className="w-10 h-10" />
-          <h1 className="text-xl font-bold text-foreground">
-            ROVEX
-          </h1>
+          <h1 className="text-xl font-bold text-foreground">ROVEX</h1>
         </div>
 
         {/* Search Bar */}
@@ -43,18 +47,16 @@ const Header = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              type="text" 
+              type="text"
               placeholder="Search rovers, orders..."
               className="pl-10 bg-muted/50 border-border focus:bg-background transition-colors"
-              
-              
               autoComplete="search-rovers"
             />
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative">
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleDarkMode}
@@ -82,13 +84,36 @@ const Header = () => {
           </Button>
 
           {/* Profile */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/profile")}
-          >
-            <User className="w-5 h-5" />
-          </Button>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+            >
+              <User className="w-5 h-5" />
+            </Button>
+
+            {/* Profile Dropdown Menu */}
+            {showProfileMenu && (
+              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg py-1 z-50">
+                <button
+                  onClick={() => {
+                    navigate("/profile");
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-[#2ec8cf]/10 dark:hover:bg-[#2ec8cf]/20 transition-colors"
+                >
+                  View Profile
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-700 transition-colors"
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

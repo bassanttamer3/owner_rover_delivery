@@ -18,29 +18,6 @@ const MainPage = () => {
   const navigate = useNavigate();
   const { setSelectedRover: setGlobalRover } = useApp();
 
-  const overviewBoxes = [
-    {
-      icon: Truck,
-      title: "Rovers Overview",
-      description: "Manage your entire delivery fleet",
-      stats: `${mockRovers.length} Total Rovers`,
-      route: "/rovers",
-    },
-    {
-      icon: Package,
-      title: "Orders Summary",
-      description: "Track all active deliveries",
-      stats: `${mockRovers.filter((r) => r.currentOrder).length} Active Orders`,
-      route: "/orders",
-    },
-    {
-      icon: Activity,
-      title: "Activity Logs",
-      description: "View complete fleet activity history",
-      stats: "Real-time updates",
-      route: "/activity-logs",
-    },
-  ];
 
   const teamMembers = [
     { name: "Bassant Tamer", role: "Team Member" },
@@ -145,120 +122,128 @@ const MainPage = () => {
           </div>
         </div>
       </section>
+     {/* ================= Rovers Intro Section ================= */}
+<section className="relative py-16 px-8 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
+  {/* Background Decoration */}
+  <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
+  <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
 
-      {/* ================= Feature Cards ================= */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-8">
-        {overviewBoxes.map((box, index) => {
-          const Icon = box.icon;
-          return (
-            <Card
-              key={index}
-              className="group hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 hover:border-[#2ec8cf]/50 bg-gradient-to-br from-background to-[#2ec8cf]/5"
-              onClick={() => navigate(box.route)}
-            >
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="w-14 h-14 rounded-xl bg-[#2ec8cf]/10 flex items-center justify-center group-hover:bg-[#2ec8cf] group-hover:scale-110 transition-all duration-300">
-                    <Icon className="w-7 h-7 text-[#2ec8cf] group-hover:text-white transition-colors" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-1">{box.title}</h3>
-                  <p className="text-sm text-muted-foreground">{box.description}</p>
-                </div>
-                <div className="pt-2 border-t border-border">
-                  <p className="text-sm font-semibold text-[#2ec8cf]">{box.stats}</p>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </section>
+  {/* Content */}
+  <div className="max-w-4xl mx-auto text-center space-y-6">
+    <h2 className="text-4xl font-extrabold text-foreground">
+      Discover Your Rovers Fleet
+    </h2>
+    <p className="text-lg text-muted-foreground leading-relaxed">
+      Explore all autonomous rovers in your fleet with a single click. 
+      Monitor their status, track current deliveries, and manage your operations efficiently.
+    </p>
 
-      {/* ================= Fleet Insights ================= */}
-      <section className="space-y-8 pt-8">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-foreground">Fleet Insights</h2>
-          <p className="text-muted-foreground mt-1">
-            Get a quick overview of your fleet performance today
-          </p>
-        </div>
+    <button
+      onClick={() => navigate("/rovers")}
+      className="mt-4 px-8 py-3 bg-[#2ec8cf] text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl hover:bg-[#2ec8cf]/90 transition-all duration-300"
+    >
+      Go to Rovers Page
+    </button>
 
-        {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {["active", "idle", "problem", "order"].map((type, idx) => {
-            let count = 0, label = "", colorFrom = "", colorTo = "", Icon = Truck;
+    {/* Small hint text */}
+    <p className="text-sm text-muted-foreground mt-2">
+      Click above to explore detailed rover stats and live tracking.
+    </p>
+  </div>
 
-            if (type === "active") { 
-              count = mockRovers.filter((r) => r.status === "active").length; 
-              label="Active Rovers"; 
-              colorFrom="from-[#2ec8cf]/10"; 
-              colorTo="to-[#2ec8cf]/20"; 
-              Icon=Truck; 
-            } else if (type === "idle") { 
-              count = mockRovers.filter((r) => r.status === "idle").length; 
-              label="Idle Rovers"; 
-              colorFrom="from-yellow-100"; 
-              colorTo="to-yellow-200"; 
-              Icon=Activity; 
-            } else if (type === "problem") { 
-              count = mockRovers.filter((r) => r.status === "problem").length; 
-              label="Problem Rovers"; 
-              colorFrom="from-red-100"; 
-              colorTo="to-red-200"; 
-              Icon=Package; 
-            } else if (type === "order") { 
-              count = mockRovers.filter((r) => r.currentOrder).length; 
-              label="Total Orders"; 
-              colorFrom="from-blue-100"; 
-              colorTo="to-blue-200"; 
-              Icon=MapPin; 
-            }
+  {/* Optional Rover Illustration */}
+  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-80 opacity-20">
+    {/* لو عندك أي svg أو Lottie animation للروفر ممكن تحطه هنا */}
+  </div>
+</section>
 
-            return (
-              <div key={idx} className={`p-6 rounded-2xl bg-gradient-to-tr ${colorFrom} ${colorTo} shadow-lg flex flex-col items-center gap-2`}>
-                <Icon className="w-10 h-10 text-[#2ec8cf]" />
-                <p className="text-3xl font-bold text-foreground">{count}</p>
-                <span className="text-sm text-muted-foreground">{label}</span>
-                <div className="w-full h-2 bg-muted rounded-full mt-2">
-                  <div className="h-full bg-[#2ec8cf] rounded-full transition-all" style={{ width: `${(count / mockRovers.length) * 100}%` }}/>
-                </div>
-              </div>
-            );
-          })}
-        </div>
 
-        {/* Pie Chart */}
-        <div className="flex flex-col md:flex-row justify-center items-center gap-8 py-8">
-          <PieChart width={250} height={250}>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              label={({ name, percent }) => `${name} ${(percent*100).toFixed(0)}%`}
-              labelLine={false}
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={index} fill={COLORS[index]} stroke="#fff" strokeWidth={2} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value) => [value, "Rovers"]} />
-          </PieChart>
-        </div>
+{/* ================= Fleet Insights ================= */}
+<section className="relative py-12 px-8 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
+  {/* Background Decoration */}
+  <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
+  <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
 
-        {/* CTA */}
-        <div
-          className="bg-[#2ec8cf]/10 p-6 rounded-2xl text-center shadow-md hover:shadow-lg transition cursor-pointer"
-          onClick={() => navigate("/dashboard")}
+  <div className="max-w-6xl mx-auto text-center space-y-8">
+    <h2 className="text-4xl font-extrabold text-foreground">Fleet Insights</h2>
+    <p className="text-muted-foreground text-lg">
+      Get a quick overview of your fleet performance today
+    </p>
+
+    {/* Dashboard Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {["active", "idle", "problem", "order"].map((type, idx) => {
+        let count = 0, label = "", colorFrom = "", colorTo = "", Icon = Truck;
+
+        if (type === "active") { 
+          count = mockRovers.filter((r) => r.status === "active").length; 
+          label="Active Rovers"; 
+          colorFrom="from-[#2ec8cf]/10"; 
+          colorTo="to-[#2ec8cf]/20"; 
+          Icon=Truck; 
+        } else if (type === "idle") { 
+          count = mockRovers.filter((r) => r.status === "idle").length; 
+          label="Idle Rovers"; 
+          colorFrom="from-yellow-100"; 
+          colorTo="to-yellow-200"; 
+          Icon=Activity; 
+        } else if (type === "problem") { 
+          count = mockRovers.filter((r) => r.status === "problem").length; 
+          label="Problem Rovers"; 
+          colorFrom="from-red-100"; 
+          colorTo="to-red-200"; 
+          Icon=Package; 
+        } else if (type === "order") { 
+          count = mockRovers.filter((r) => r.currentOrder).length; 
+          label="Total Orders"; 
+          colorFrom="from-blue-100"; 
+          colorTo="to-blue-200"; 
+          Icon=MapPin; 
+        }
+
+        return (
+          <div key={idx} className={`p-6 rounded-2xl bg-gradient-to-tr ${colorFrom} ${colorTo} shadow-lg flex flex-col items-center gap-2`}>
+            <Icon className="w-10 h-10 text-[#2ec8cf]" />
+            <p className="text-3xl font-bold text-foreground">{count}</p>
+            <span className="text-sm text-muted-foreground">{label}</span>
+            <div className="w-full h-2 bg-muted rounded-full mt-2">
+              <div className="h-full bg-[#2ec8cf] rounded-full transition-all" style={{ width: `${(count / mockRovers.length) * 100}%` }}/>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Pie Chart */}
+    <div className="flex justify-center py-8">
+      <PieChart width={250} height={250}>
+        <Pie
+          data={pieData}
+          dataKey="value"
+          cx="50%"
+          cy="50%"
+          outerRadius={100}
+          label={({ name, percent }) => `${name} ${(percent*100).toFixed(0)}%`}
+          labelLine={false}
         >
-          <h3 className="text-lg font-bold text-[#2ec8cf]">Go to Dashboard</h3>
-          <p className="text-sm text-muted-foreground">
-            View detailed stats and manage your fleet
-          </p>
-        </div>
-      </section>
+          {pieData.map((entry, index) => (
+            <Cell key={index} fill={COLORS[index]} stroke="#fff" strokeWidth={2} />
+          ))}
+        </Pie>
+        <Tooltip formatter={(value) => [value, "Rovers"]} />
+      </PieChart>
+    </div>
+
+    {/* CTA Button */}
+    <button
+      onClick={() => navigate("/dashboard")}
+      className="mt-6 px-8 py-3 bg-[#2ec8cf] text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl hover:bg-[#2ec8cf]/90 transition-all duration-300"
+    >
+      Go to Dashboard
+    </button>
+  </div>
+</section>
+      
 
       {/* ================= About Us Section ================= */}
       <section className="space-y-8 pt-12">

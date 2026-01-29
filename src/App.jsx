@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 
-import ProtectedRoute from "@/components/ProtectedRoute"; // ← جديد
+import ProtectedRoute from "@/components/ProtectedRoute"; 
+
 
 import MainLayout from "@/layouts/MainLayout";
 import MainPage from "./pages/MainPage";
@@ -17,7 +18,7 @@ import Notifications from "./pages/Notifications";
 import ActivityLogs from "./pages/ActivityLogs";
 import Settings from "./pages/Settings";
 import Profile from "./pages/profile";
-import Login from "./pages/Login"; // ← جديد
+import Login from "./pages/Login"; 
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

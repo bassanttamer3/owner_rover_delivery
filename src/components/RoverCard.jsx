@@ -1,79 +1,67 @@
-import React from 'react';
-import { Battery, MapPin, Clock, TrendingUp } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+// RoverCard.jsx
+import React from "react";
+import { TrendingUp, Package } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
-const RoverCard = ({ rover, onClick, isSelected }) => {
-  const statusConfig = {
-    active: { label: 'Active', className: 'bg-success text-success-foreground' },
-    idle: { label: 'Idle', className: 'bg-warning text-warning-foreground' },
-    problem: { label: 'Problem', className: 'bg-destructive text-destructive-foreground' },
-  };
-
-  const status = statusConfig[rover.status];
-
-  const getBatteryColor = (battery) => {
-    if (battery > 60) return 'text-success';
-    if (battery > 30) return 'text-warning';
-    return 'text-destructive';
+const RoverCard = ({ rover, onDetails }) => {
+  const statusStyles = {
+    active: "bg-green-500/10 text-green-600",
+    idle: "bg-yellow-500/10 text-yellow-600",
+    problem: "bg-red-500/10 text-red-600",
   };
 
   return (
-    <Card
-      className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-md',
-        isSelected && 'ring-2 ring-primary shadow-md'
-      )}
-      onClick={onClick}
-    >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
+    <Card className="cursor-pointer hover:shadow-md transition">
+      <CardContent className="p-4 space-y-3">
+        {/* ================= HEADER ================= */}
+        <div className="flex justify-between items-start">
           <div>
-            <h3 className="font-semibold text-foreground">{rover.name}</h3>
+            <h3 className="font-semibold leading-tight">{rover.name}</h3>
             <p className="text-xs text-muted-foreground">{rover.id}</p>
           </div>
-          <Badge className={status.className}>{status.label}</Badge>
+
+          <Badge className={statusStyles[rover.status]}>
+            {rover.status}
+          </Badge>
         </div>
 
-        <div className="space-y-2.5">
-          {/* Battery */}
-          <div className="flex items-center gap-2">
-            <Battery className={cn('w-4 h-4', getBatteryColor(rover.battery))} />
-            <div className="flex-1">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs text-muted-foreground">Battery</span>
-                <span className={cn('text-xs font-medium', getBatteryColor(rover.battery))}>
-                  {rover.battery}%
-                </span>
-              </div>
-              <Progress value={rover.battery} className="h-1.5" />
-            </div>
+        {/* ================= INFO ROW ================= */}
+        <div className="flex justify-between text-sm">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <TrendingUp className="w-4 h-4" />
+            {rover.speed} mph
           </div>
+        </div>
 
-          {/* Speed */}
+        {/* ================= ORDER ================= */}
+        {rover.currentOrder && (
           <div className="flex items-center gap-2 text-sm">
-            <TrendingUp className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Speed:</span>
-            <span className="font-medium text-foreground">{rover.speed} mph</span>
+            <Package className="w-4 h-4 text-primary" />
+            <span className="truncate">{rover.currentOrder.id}</span>
           </div>
+        )}
 
-          {/* Current Order */}
-          {rover.currentOrder && (
-            <div className="flex items-center gap-2 text-sm">
-              <MapPin className="w-4 h-4 text-primary" />
-              <span className="text-muted-foreground">Order:</span>
-              <span className="font-medium text-foreground">{rover.currentOrder}</span>
+        {/* ================= PROGRESS ================= */}
+        {rover.deliveryProgress > 0 && (
+          <div>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-muted-foreground">Delivery</span>
+              <span>{rover.deliveryProgress}%</span>
             </div>
-          )}
-
-          {/* Last Update */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 border-t border-border">
-            <Clock className="w-3 h-3" />
-            <span>Updated {new Date(rover.lastUpdate).toLocaleTimeString()}</span>
+            <Progress value={rover.deliveryProgress} className="h-1.5" />
           </div>
-        </div>
+        )}
+
+        {/* ================= DETAILS BUTTON ================= */}
+        <button
+          onClick={onDetails}
+          className="mt-3 w-full bg-primary text-white py-1.5 rounded-lg hover:bg-primary/90 transition"
+        >
+          View Details
+        </button>
       </CardContent>
     </Card>
   );
