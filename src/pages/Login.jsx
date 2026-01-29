@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const BASE_URL = "https://100.48.4.149/auth/api/v1";
+const BASE_URL = "https://rovex.click/auth/api/v1";
 
 const Login = () => {
   const navigate = useNavigate();
