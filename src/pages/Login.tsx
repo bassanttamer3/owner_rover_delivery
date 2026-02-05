@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import {
   Card,
@@ -7,18 +7,19 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { loginFleet, loginCompany } from "@/api";
+import { login } from "@/api";
 import type { AxiosError } from "axios";
-import { LoginCredentials } from "@/common";
+import { LoginCredentials, LoginPath } from "@/common";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loginType, setLoginType] = useState<"fleet" | "company">("fleet");
+  const [loginType, setLoginType] = useState<LoginPath>("fleet");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,13 +31,13 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const loginApi = loginType === "fleet" ? loginFleet : loginCompany;
       const data: LoginCredentials = {
         email,
         password,
       };
-      const response = await loginApi(data);
+      const response = await login(data, loginType);
       const { user, tokens } = response.data.data;
+      localStorage.setItem("login_type", loginType);
       localStorage.setItem("access_token", tokens.access_token);
       localStorage.setItem("refresh_token", tokens.refresh_token);
       localStorage.setItem("user_type", loginType);
@@ -106,6 +107,15 @@ const Login = () => {
             {loading ? "Logging in..." : "Login"}
           </Button>
         </CardContent>
+        <CardFooter className="justify-center">
+          <Link
+            to={`/${loginType}/forget-password`}
+            className="text-sm text-cyan-600 hover:text-cyan-700 hover:underline"
+          >
+            Forgot password?
+          </Link>
+
+        </CardFooter>
       </Card>
     </div>
   );

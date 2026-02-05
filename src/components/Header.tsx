@@ -6,15 +6,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/contexts/AppContext";
+import { logout } from "@/api";
+import { toast } from "sonner";
 
 const Header = () => {
   const navigate = useNavigate();
   const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode } = useApp();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = "/login";
+  const handlerLogout = async () => {
+    try {
+      await logout();
+      localStorage.clear();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -99,7 +107,7 @@ const Header = () => {
                   View Profile
                 </button>
                 <button
-                  onClick={handleLogout}
+                  onClick={handlerLogout}
                   className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-700 transition-colors"
                 >
                   Log Out

@@ -17,6 +17,11 @@ import ActivityLogs from "@/pages/ActivityLogs";
 import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
+import ForgetPassword from "@/pages/ForgotPassword";
+import RestPassword from "@/pages/ResetPassword";
+import FleetOperators from "@/pages/FleetOperators";
+import Companies from "@/pages/Companies";
+
 
 function RootLayout() {
   return (
@@ -35,9 +40,13 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: "login",
+        path: "",
         element: <AuthLayout />,
-        children: [{ index: true, element: <Login /> }],
+        children: [
+          { index: true, path: "login", element: <Login /> },
+          { path: ":loginType/forget-password", element: <ForgetPassword /> },
+          { path: "reset-password", element: <RestPassword /> },
+        ],
       },
       {
         path: "/",
@@ -55,6 +64,9 @@ export const router = createBrowserRouter([
               { path: "activity-logs", element: <ActivityLogs /> },
               { path: "settings", element: <Settings /> },
               { path: "profile", element: <Profile /> },
+              { path: "fleet-operators", element: <FleetOperators /> },
+               { path: "Companies", element: <Companies/> },
+
             ],
           },
         ],

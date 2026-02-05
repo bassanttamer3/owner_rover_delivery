@@ -2,6 +2,9 @@ import { Mail, ShieldCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { profilePics, profilePicUrls } from "@/assets/profilepic";
+import { logout } from "@/api";
+import { toast } from "sonner";
+
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -17,6 +20,17 @@ const Profile = () => {
     setAvatar(pic);
     localStorage.setItem("selectedAvatar", pic);
     setShowGallery(false);
+  };
+
+  const handlerLogout = async () => {
+    try {
+      await logout();
+      localStorage.clear();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -86,10 +100,7 @@ const Profile = () => {
 
       <div className="mt-6">
         <button
-          onClick={() => {
-            localStorage.clear();
-            window.location.href = "/login";
-          }}
+          onClick={handlerLogout}
           className="px-6 py-2 bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white rounded-lg shadow transition"
         >
           Log Out

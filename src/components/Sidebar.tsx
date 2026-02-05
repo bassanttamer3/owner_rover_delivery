@@ -8,6 +8,8 @@ import {
   Bell,
   Activity,
   Settings,
+  Users,
+  Building2,
 } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { cn } from "@/lib/utils";
@@ -17,6 +19,9 @@ const menuItems = [
   { icon: BarChart, label: "Dashboard", path: "/dashboard" },
   { icon: MapPin, label: "Live Tracking", path: "/live-tracking" },
   { icon: Truck, label: "Rovers", path: "/rovers" },
+  { icon: Users, label: "Fleet Operators", path: "/fleet-operators" },
+  { icon: Building2, label: "Companies", path: "/Companies" },
+  
   { icon: Package, label: "Orders", path: "/orders" },
   { icon: Bell, label: "Notifications", path: "/notifications" },
   { icon: Activity, label: "Activity Logs", path: "/activity-logs" },
