@@ -21,6 +21,7 @@ const menuItems = [
   { icon: Truck, label: "Rovers", path: "/rovers" },
   { icon: Users, label: "Fleet Operators", path: "/fleet-operators" },
   { icon: Building2, label: "Companies", path: "/Companies" },
+  { icon: Users, label: "Company Users", path: "/company-users" },
   
   { icon: Package, label: "Orders", path: "/orders" },
   { icon: Bell, label: "Notifications", path: "/notifications" },
@@ -30,6 +31,16 @@ const menuItems = [
 
 const Sidebar = () => {
   const { isSidebarOpen } = useApp();
+  const userType = localStorage.getItem("user_type");
+  const visibleItems =
+    userType === "company"
+      ? menuItems.filter(
+          (item) =>
+            item.path !== "/fleet-operators" && item.path !== "/Companies"
+        )
+      : userType === "fleet"
+        ? menuItems.filter((item) => item.path !== "/company-users")
+        : menuItems;
 
   return (
     <aside
@@ -41,7 +52,7 @@ const Sidebar = () => {
       <div className="flex flex-col h-full">
         <nav className="flex-1 px-3 py-6">
           <ul className="space-y-2">
-            {menuItems.map((item) => {
+            {visibleItems.map((item) => {
               const Icon = item.icon;
               return (
                 <li key={item.path}>

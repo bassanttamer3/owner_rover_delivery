@@ -6,21 +6,25 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AuthLayout from "@/layouts/AuthLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import Login from "@/pages/Login";
-import MainPage from "@/pages/MainPage";
-import Dashboard from "@/pages/Dashboard";
-import LiveTracking from "@/pages/LiveTracking";
-import Rovers from "@/pages/Rovers";
-import Orders from "@/pages/Orders";
-import Notifications from "@/pages/Notifications";
-import ActivityLogs from "@/pages/ActivityLogs";
-import Settings from "@/pages/Settings";
-import Profile from "@/pages/Profile";
-import NotFound from "@/pages/NotFound";
-import ForgetPassword from "@/pages/ForgotPassword";
-import RestPassword from "@/pages/ResetPassword";
-import FleetOperators from "@/pages/FleetOperators";
-import Companies from "@/pages/Companies";
+import Login from "@/pages/Login/Login";
+import MainPage from "@/pages/MainPage/MainPage";
+import Dashboard from "@/pages/Dashboard/Dashboard";
+import LiveTracking from "@/pages/LiveTracking/LiveTracking";
+import Rovers from "@/pages/Rovers/Rovers";
+import Orders from "@/pages/Orders/Orders";
+import Notifications from "@/pages/Notifications/Notifications";
+import ActivityLogs from "@/pages/ActivityLogs/ActivityLogs";
+import Settings from "@/pages/Settings/Settings";
+import Profile from "@/pages/Profile/Profile";
+import NotFound from "@/pages/NotFound/NotFound";
+import ForgetPassword from "@/pages/ForgotPassword/ForgotPassword";
+import RestPassword from "@/pages/ResetPassword/ResetPassword";
+import FleetOperators from "@/pages/FleetOperators/FleetOperators";
+import Companies from "@/pages/Companies/Companies";
+import CompanyUsers from "@/pages/CompanyUsers/CompanyUsers";
+import CompanyProfile from "@/pages/CompanyProfile/CompanyProfile";
+import ChangePassword from "@/pages/ChangePassword/ChangePassword";
+import Details from "@/pages/CompanyUsers/Details";
 
 
 function RootLayout() {
@@ -46,6 +50,7 @@ export const router = createBrowserRouter([
           { index: true, path: "login", element: <Login /> },
           { path: ":loginType/forget-password", element: <ForgetPassword /> },
           { path: "reset-password", element: <RestPassword /> },
+          { path: "change-password", element: <ChangePassword /> },
         ],
       },
       {
@@ -65,8 +70,12 @@ export const router = createBrowserRouter([
               { path: "settings", element: <Settings /> },
               { path: "profile", element: <Profile /> },
               { path: "fleet-operators", element: <FleetOperators /> },
-               { path: "Companies", element: <Companies/> },
+              
+              { path: "Companies", element: <Companies/> },
+              { path: "companies/:company_id", element: <CompanyProfile /> },
 
+              { path: "company-users", element: <CompanyUsers /> },
+              { path: "company-users/:user_id", element: <Details /> },
             ],
           },
         ],

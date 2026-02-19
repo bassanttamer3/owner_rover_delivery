@@ -5,6 +5,6 @@
 export * from "./auth/auth";
 export * from "./FleetOperators/FleetOperators";
 export * from "./companies/companies";
-
-
+export * from "./company-users/company-users";
+export * from "./profile-management/profile-management";
 

@@ -9,51 +9,39 @@ import {
 
 // --- Core Company Management ---
 
-/** Create a new company entity */
 export function createCompany(data: CreateCompanyPayload) {
   return API.post("/fleet/companies", data);
 }
 
-/** Get paginated list of companies with optional filters */
 export function getCompanies(params: CompanyParams) {
   return API.get("/fleet/companies", { params });
 }
 
-/** Retrieve specific company details by ID */
 export function getCompanyById(id: string) {
   return API.get(`/fleet/companies/${id}`);
 }
 
-/** Update company basic profile (Name & Contact) */
 export function updateCompany(id: string, data: { name: string; contact: any }) {
   return API.put(`/fleet/companies/${id}`, data);
 }
 
 // --- Status & Subscription ---
 
-/** Activate a suspended or trial company */
 export function activateCompany(id: string, reason: string) {
   return API.post(`/fleet/companies/${id}/activate`, { reason });
 }
 
-/** Suspend company access for administrative reasons */
 export function suspendCompany(id: string, reason: string) {
   return API.post(`/fleet/companies/${id}/suspend`, { reason });
 }
 
-/** Hard delete a company and its associated data (Use with caution) */
-export function deleteCompany(id: string) {
-  return API.delete(`/fleet/companies/${id}`);
-}
-/** Update company status generally */
-export function updateCompanyStatus(id: string, data: CompanyStatusPayload) {
-  return API.patch(`/fleet/companies/${id}/status`, data);
-}
-/** Terminate company subscription */
 export function cancelCompanySubscription(id: string, reason: string) {
   return API.post(`/fleet/companies/${id}/cancel`, { reason });
 }
 
+export function updateCompanyStatus(id: string, data: CompanyStatusPayload) {
+  return API.patch(`/fleet/companies/${id}/status`, data);
+}
 // --- Location Management ---
 
 /** Add a new operational location to a company */
@@ -101,3 +89,5 @@ export function updateCompanySettings(companyId: string, data: CompanySettings) 
 export function getCompanyStats(companyId: string) {
   return API.get(`/fleet/companies/${companyId}/stats`);
 }
+
+
