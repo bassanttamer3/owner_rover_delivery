@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -9,20 +10,60 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Users, RefreshCw } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { toast } from "sonner"; // Using sonner for notifications
+import { 
+  Users, 
+  RefreshCw, 
+  MoreHorizontal, 
+  UserCircle, 
+  Edit3, 
+  Power,
+  AlertTriangle
+} from "lucide-react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { 
   activateOperator, 
   suspendOperator, 
   deactivateOperator, 
   getFleetOperators, 
-  getOperatorById, 
   updateFleetOperator, 
   createFleetOperator 
 } from "@/api";
 
+const statusConfig: Record<string, { label: string; className: string }> = {
+  active: { 
+    label: "Active", 
+    className: "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 hover:bg-emerald-100" 
+  },
+  inactive: { 
+    label: "Inactive", 
+    className: "bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20 hover:bg-rose-100" 
+  },
+  suspended: { 
+    label: "Suspended", 
+    className: "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20 hover:bg-amber-100" 
+  },
+};
+
 const FleetOperators = () => {
+  const navigate = useNavigate();
+  
   // --- State Management ---
   const [form, setForm] = useState({
     name: "",
@@ -36,18 +77,22 @@ const FleetOperators = () => {
   const [listLoading, setListLoading] = useState(true);
   const [error, setError] = useState("");
   const [operators, setOperators] = useState<any[]>([]);
-  const [selectedOperator, setSelectedOperator] = useState<any>(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
+
+  // --- Confirmation Dialog State ---
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    operatorId: "",
+    newStatus: "",
+  });
 
   // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const ITEMS_PER_PAGE = 6;
 
-  // --- Configuration Data ---
   const permissionsList = ["COMPANY_VIEW", "COMPANY_EDIT", "ROVER_VIEW"];
   const rolesList = [
     { value: "super_admin", label: "Super Admin" },
@@ -57,11 +102,18 @@ const FleetOperators = () => {
     { value: "analyst", label: "Analyst" },
   ];
 
-  /**
-   * Status Change Handler
-   * Triggers specific API endpoints based on selection
-   */
-  const handleStatusChange = async (operatorId: string, newStatus: string) => {
+  const handleStatusChangeRequest = (operatorId: string, newStatus: string) => {
+    setConfirmModal({
+      show: true,
+      operatorId,
+      newStatus,
+    });
+  };
+
+  const confirmStatusChange = async () => {
+    const { operatorId, newStatus } = confirmModal;
+    setConfirmModal((prev) => ({ ...prev, show: false }));
+    
     try {
       setListLoading(true);
       if (newStatus === "active") {
@@ -74,7 +126,7 @@ const FleetOperators = () => {
 
       setOperators((prev) =>
         prev.map((op) =>
-          op.operator_id === operatorId || op.id === operatorId
+          (op.operator_id === operatorId || op.id === operatorId)
             ? { ...op, status: newStatus }
             : op,
         ),
@@ -92,9 +144,6 @@ const FleetOperators = () => {
     }
   };
 
-  /**
-   * Fetch Operators List from API
-   */
   const fetchOperators = async (page = 1) => {
     setListLoading(true);
     try {
@@ -116,26 +165,8 @@ const FleetOperators = () => {
     }
   };
 
-  /**
-   * Modal: View Full Profile Details
-   */
-  const handleViewDetails = async (operatorId: string) => {
-    try {
-      const res = await getOperatorById(operatorId);
-      const operatorData = res.data.data?.operator || res.data.data;
-      if (operatorData) {
-        setSelectedOperator(operatorData);
-        setShowDetailsModal(true);
-      }
-    } catch (err) {
-      console.error("Details Fetch Failed:", err);
-    }
-  };
-
-  /**
-   * Form: Prepare UI for Modification
-   */
-  const handleEditClick = (op: any) => {
+  const handleEditClick = (op: any, e: React.MouseEvent) => {
+    e.stopPropagation(); 
     setIsEditing(true);
     setEditingId(op.operator_id || op.id);
     setForm({
@@ -152,9 +183,6 @@ const FleetOperators = () => {
     fetchOperators();
   }, []);
 
-  /**
-   * Permission Toggler
-   */
   const togglePermission = (perm: string) => {
     setForm((prev) => ({
       ...prev,
@@ -164,9 +192,6 @@ const FleetOperators = () => {
     }));
   };
 
-  /**
-   * Final Submission Logic (Create or Update)
-   */
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
@@ -185,7 +210,6 @@ const FleetOperators = () => {
         const res = await createFleetOperator(form);
         const tempPass = res.data?.data?.credentials?.temporary_password;
         
-        // Show password in toast for 20 seconds if it exists
         toast.success("Operator created successfully!", {
           description: tempPass ? `Temp Password: ${tempPass}` : "Credentials sent to email.",
           duration: 20000,
@@ -214,14 +238,13 @@ const FleetOperators = () => {
   };
 
   return (
-    <div className="space-y-6 pt-12 ">
+    <div className="space-y-6 pt-12">
       
-      {/* --- DATABASE SECTION --- */}
-      <Card>
+      <Card className="border-none shadow-sm bg-card text-card-foreground">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div>
-            <CardTitle className="text-lg">Fleet Directory</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg font-bold">Fleet Directory</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Managing {operators.length} personnel entries
             </CardDescription>
           </div>
@@ -232,7 +255,7 @@ const FleetOperators = () => {
                 setForm({ name: "", email: "", phone: "", role: "fleet_manager", permissions: [] });
                 setShowFormModal(true);
               }}
-              className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white font-bold"
+              className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white font-black"
               size="sm"
             >
               Add Operator
@@ -242,7 +265,7 @@ const FleetOperators = () => {
               variant="outline"
               size="sm"
               onClick={() => fetchOperators(currentPage)}
-              className="text-[#2ec8cf]"
+              className="text-[#2ec8cf] border-[#2ec8cf]/20 hover:bg-[#2ec8cf]/10 font-bold"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${listLoading ? "animate-spin" : ""}`} /> 
               Sync
@@ -253,103 +276,176 @@ const FleetOperators = () => {
         <CardContent>
           <div className="rounded-md border border-border/50 overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-muted/50 text-[10px] uppercase font-bold text-muted-foreground">
-                <tr className="border-b border-border/50">
-                  <th className="p-4 text-left">Identity Profile</th>
-                  <th className="p-4 text-left">Functional Role</th>
-                  <th className="p-4 text-left">Status</th>
+              <thead className="bg-muted/50 text-[10px] uppercase font-black text-muted-foreground">
+                <tr className="border-b border-border/50 text-left">
+                  <th className="p-4">Identity Profile</th>
+                  <th className="p-4">Functional Role</th>
+                  <th className="p-4">Status</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
                 {listLoading && operators.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-12 text-center text-muted-foreground animate-pulse">
+                    <td colSpan={4} className="p-12 text-center text-muted-foreground animate-pulse font-medium">
                       Synchronizing directory...
                     </td>
                   </tr>
                 ) : (
-                  operators.map((op) => (
-                    <tr key={op.operator_id || op.id} className="hover:bg-muted/20 transition-colors group">
-                      <td className="p-4">
-                        <div className="font-bold group-hover:text-[#2ec8cf] transition-colors">{op.name}</div>
-                        <div className="text-[11px] text-muted-foreground font-mono">{op.email}</div>
-                      </td>
-                      <td className="p-4">
-                        <span className="text-[10px] font-black uppercase bg-muted px-2 py-0.5 rounded">
-                          {op.role?.replace(/_/g, " ")}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <select
-                          value={op.status}
-                          onChange={(e) => handleStatusChange(op.operator_id || op.id, e.target.value)}
-                          className={`bg-transparent border-none font-bold text-[10px] uppercase cursor-pointer focus:ring-0 p-0 ${
-                            op.status === "active" ? "text-emerald-500" : "text-rose-500"
-                          }`}
-                        >
-                          <option value="active" className="dark:bg-[#0f172a]">Active</option>
-                          <option value="suspended" className="dark:bg-[#0f172a]">Suspended</option>
-                          <option value="inactive" className="dark:bg-[#0f172a]">Inactive</option>
-                        </select>
-                      </td>
-                      <td className="p-4 text-right space-x-3">
-                        <button onClick={() => handleViewDetails(op.operator_id || op.id)} className="text-muted-foreground font-bold text-[11px] uppercase hover:text-foreground">Profile</button>
-                        <button onClick={() => handleEditClick(op)} className="text-[#2ec8cf] font-bold text-[11px] uppercase hover:underline">Edit</button>
-                      </td>
-                    </tr>
-                  ))
+                  operators.map((op) => {
+                    const status = statusConfig[op.status?.toLowerCase()] || { label: op.status, className: "bg-gray-100" };
+                    const opId = op.operator_id || op.id;
+                    return (
+                      <tr 
+                        key={opId} 
+                        onClick={() => navigate(`/fleet-operators/${opId}`)}
+                        className="hover:bg-muted/40 transition-colors group cursor-pointer"
+                      >
+                        <td className="p-4">
+                          <div className="font-bold group-hover:text-[#2ec8cf] transition-colors">{op.name}</div>
+                          <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-tighter">
+                            {opId}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Badge 
+                            variant="secondary" 
+                            className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 hover:bg-slate-200 font-bold rounded-full px-3"
+                          >
+                            {op.role?.replace(/_/g, " ")}
+                          </Badge>
+                        </td>
+                        <td className="p-4">
+                          <Badge variant="outline" className={`rounded-full px-3 py-0.5 font-black border uppercase text-[10px] ${status.className}`}>
+                            {status.label}
+                          </Badge>
+                        </td>
+                        <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-[#2ec8cf]">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 bg-card border-border">
+                              <DropdownMenuLabel className="text-[10px] text-muted-foreground font-black uppercase">Manage Operator</DropdownMenuLabel>
+                              
+                              <DropdownMenuItem onClick={() => navigate(`/fleet-operators/${opId}`)} className="text-sm font-medium">
+                                <UserCircle className="mr-2 h-4 w-4 opacity-70" /> View Profile
+                              </DropdownMenuItem>
+                              
+                              <DropdownMenuItem onClick={(e) => handleEditClick(op, e)} className="text-sm font-medium">
+                                <Edit3 className="mr-2 h-4 w-4 opacity-70" /> Edit Details
+                              </DropdownMenuItem>
+
+                              <DropdownMenuSeparator />
+
+                              {op.status === "active" ? (
+                                <>
+                                  <DropdownMenuItem 
+                                    className="text-amber-600 focus:text-amber-600 focus:bg-amber-50 dark:focus:bg-amber-500/10 font-medium text-sm" 
+                                    onClick={() => handleStatusChangeRequest(opId, "suspended")}
+                                  >
+                                    <Power className="mr-2 h-4 w-4" /> Suspend
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-500/10 font-medium text-sm" 
+                                    onClick={() => handleStatusChangeRequest(opId, "inactive")}
+                                  >
+                                    <Power className="mr-2 h-4 w-4" /> Deactivate
+                                  </DropdownMenuItem>
+                                </>
+                              ) : (
+                                <DropdownMenuItem 
+                                  className="text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 dark:focus:bg-emerald-500/10 font-medium text-sm" 
+                                  onClick={() => handleStatusChangeRequest(opId, "active")}
+                                >
+                                  <Power className="mr-2 h-4 w-4" /> Activate Account
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
           </div>
 
           <div className="flex justify-between items-center mt-4">
-            <Button variant="outline" size="sm" disabled={currentPage === 1 || listLoading} onClick={() => fetchOperators(currentPage - 1)}>Previous</Button>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">Page {currentPage} of {totalPages}</span>
-            <Button variant="outline" size="sm" disabled={currentPage >= totalPages || listLoading} onClick={() => fetchOperators(currentPage + 1)} className="bg-[#2ec8cf] text-white hover:bg-[#2ec8cf]/80 border-none">Next</Button>
+            <Button variant="outline" size="sm" disabled={currentPage === 1 || listLoading} onClick={() => fetchOperators(currentPage - 1)} className="font-bold">Previous</Button>
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
+            <Button variant="outline" size="sm" disabled={currentPage >= totalPages || listLoading} onClick={() => fetchOperators(currentPage + 1)} className="bg-[#2ec8cf] text-white hover:bg-[#2ec8cf]/80 border-none font-bold">Next</Button>
           </div>
         </CardContent>
       </Card>
 
+      {/* --- CONFIRMATION DIALOG --- */}
+      <Dialog open={confirmModal.show} onOpenChange={(val) => setConfirmModal(prev => ({ ...prev, show: val }))}>
+        <DialogContent className="max-w-md border-none bg-card shadow-2xl">
+          <DialogHeader className="flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-4">
+              <AlertTriangle className="text-amber-500 w-6 h-6" />
+            </div>
+            <DialogTitle className="text-xl font-black">Confirm Status Change</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Are you sure you want to change this operator's status to <span className="font-bold text-foreground uppercase tracking-tight">{confirmModal.newStatus}</span>? This action will affect their system access immediately.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:justify-center pt-4">
+            <Button variant="ghost" onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))} className="font-bold">
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmStatusChange} 
+              className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white font-black px-8"
+            >
+              Yes, Update Status
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* --- MODAL: CREATE / MODIFY OPERATOR --- */}
       <Dialog open={showFormModal} onOpenChange={setShowFormModal}>
         <DialogContent className="max-w-2xl p-0 overflow-hidden border-none bg-transparent">
-          <Card className={isEditing ? "border-[#2ec8cf] ring-1 ring-[#2ec8cf]/20 shadow-2xl relative" : "relative shadow-2xl"}>
+          <Card className={isEditing ? "border-[#2ec8cf] ring-1 ring-[#2ec8cf]/20 shadow-2xl relative bg-card" : "relative shadow-2xl bg-card"}>
             <div className="absolute top-0 left-0 w-full h-1 bg-[#2ec8cf]" />
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 font-black">
                     <Users className="w-5 h-5 text-[#2ec8cf]" />
                     {isEditing ? "Modify Fleet Operator" : "Register Fleet Operator"}
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted-foreground">
                     {isEditing ? "Update account details and access level" : "Setup access credentials and roles for fleet personnel"}
                   </CardDescription>
                 </div>
-                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {error && <div className="p-4 bg-red-500/10 text-red-500 rounded-lg text-sm border border-red-500/20 font-medium">{error}</div>}
+              {error && <div className="p-4 bg-red-500/10 text-red-500 rounded-lg text-sm border border-red-500/20 font-bold">{error}</div>}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label>Full Name</Label>
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="John Doe" />
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Full Name</Label>
+                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="John Doe" className="bg-muted/30 focus:bg-background transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email Address {isEditing && "(Read Only)"}</Label>
-                  <Input disabled={isEditing} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" />
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Email Address {isEditing && "(Read Only)"}</Label>
+                  <Input disabled={isEditing} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" className="bg-muted/30 focus:bg-background transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Phone Number</Label>
-                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+1..." />
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Phone Number</Label>
+                  <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+1..." className="bg-muted/30 focus:bg-background transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Designated Role</Label>
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Designated Role</Label>
                   <select
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-[#2ec8cf] transition-all"
+                    className="flex h-10 w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm focus:ring-2 focus:ring-[#2ec8cf] transition-all font-medium"
                     value={form.role}
                     onChange={(e) => setForm({ ...form, role: e.target.value })}
                   >
@@ -359,7 +455,7 @@ const FleetOperators = () => {
               </div>
 
               <div className="space-y-3">
-                <Label className="flex items-center text-xs uppercase tracking-widest text-muted-foreground">
+                <Label className="flex items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   <span className="w-2 h-2 rounded-full bg-[#2ec8cf] mr-2 inline-block"></span>
                   Permissions Control
                 </Label>
@@ -367,9 +463,10 @@ const FleetOperators = () => {
                   {permissionsList.map((perm) => (
                     <button
                       key={perm}
+                      type="button"
                       onClick={() => togglePermission(perm)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold border transition-all ${
-                        form.permissions.includes(perm) ? "bg-[#2ec8cf] border-[#2ec8cf] text-white" : "bg-transparent border-input text-muted-foreground hover:border-[#2ec8cf]"
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black border transition-all ${
+                        form.permissions.includes(perm) ? "bg-[#2ec8cf] border-[#2ec8cf] text-white shadow-lg shadow-[#2ec8cf]/20" : "bg-muted/30 border-border text-muted-foreground hover:border-[#2ec8cf]"
                       }`}
                     >
                       {perm.replace(/_/g, " ")}
@@ -379,54 +476,11 @@ const FleetOperators = () => {
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-                <Button variant="ghost" onClick={() => setShowFormModal(false)}>Cancel</Button>
-                <Button onClick={handleSubmit} disabled={loading} className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white font-bold px-8">
+                <Button variant="ghost" onClick={() => setShowFormModal(false)} className="font-bold text-muted-foreground">Cancel</Button>
+                <Button onClick={handleSubmit} disabled={loading} className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white font-black px-8">
                   {loading ? "Processing..." : isEditing ? "Save Changes" : "Confirm & Create"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </DialogContent>
-      </Dialog>
-
-      {/* --- MODAL: OPERATOR DETAILS --- */}
-      <Dialog open={showDetailsModal && !!selectedOperator} onOpenChange={setShowDetailsModal}>
-        <DialogContent className="max-w-lg p-0 overflow-hidden border-none bg-transparent">
-          <Card className="w-full shadow-2xl relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-[#2ec8cf]" />
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-[10px] font-black text-[#2ec8cf] uppercase tracking-widest mb-1">Operator Profile</p>
-                  <CardTitle className="text-2xl font-black">{selectedOperator?.name}</CardTitle>
-                </div>
-                
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-               <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-1">
-                  <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Unique ID</span>
-                  <p className="text-sm font-mono font-bold truncate">{selectedOperator?.operator_id || selectedOperator?.id}</p>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Access Status</span>
-                  <p className={`text-xs font-black uppercase ${selectedOperator?.status === "active" ? "text-emerald-500" : "text-rose-500"}`}>{selectedOperator?.status}</p>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Contact Email</span>
-                  <p className="text-sm font-bold truncate">{selectedOperator?.email}</p>
-                </div>
-                <div className="space-y-1">
-                  <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Phone</span>
-                  <p className="text-sm font-bold">{selectedOperator?.phone || "N/A"}</p>
-                </div>
-                <div className="col-span-2 p-3 bg-muted/50 rounded-lg">
-                  <span className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Role Assigned</span>
-                  <p className="text-sm font-black uppercase text-[#2ec8cf]">{selectedOperator?.role?.replace(/_/g, " ")}</p>
-                </div>
-              </div>
-              <Button onClick={() => setShowDetailsModal(false)} className="w-full font-bold">Close Directory Profile</Button>
             </CardContent>
           </Card>
         </DialogContent>

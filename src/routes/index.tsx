@@ -25,6 +25,7 @@ import CompanyUsers from "@/pages/CompanyUsers/CompanyUsers";
 import CompanyProfile from "@/pages/CompanyProfile/CompanyProfile";
 import ChangePassword from "@/pages/ChangePassword/ChangePassword";
 import Details from "@/pages/CompanyUsers/Details";
+import OperatorProfile from "@/pages/OperatorProfile/OperatorProfile";
 
 
 function RootLayout() {
@@ -70,9 +71,9 @@ export const router = createBrowserRouter([
               { path: "settings", element: <Settings /> },
               { path: "profile", element: <Profile /> },
               { path: "fleet-operators", element: <FleetOperators /> },
-              
-              { path: "Companies", element: <Companies/> },
               { path: "companies/:company_id", element: <CompanyProfile /> },
+              { path: "Companies", element: <Companies/> },
+              { path: "fleet-operators/:operator_id", element: <OperatorProfile /> },
 
               { path: "company-users", element: <CompanyUsers /> },
               { path: "company-users/:user_id", element: <Details /> },
