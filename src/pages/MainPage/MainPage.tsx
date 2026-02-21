@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { useApp } from "@/contexts/AppContext";
-import { Truck, Package, Activity, Users, MapPin } from "lucide-react";
+import { Truck, Package, Activity, Users, MapPin, Mail, Phone, Github, Linkedin, Globe } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import Lottie from "lottie-react";
 import mockRovers from "@/data/mockrovers.json";
@@ -14,20 +14,6 @@ const MainPage = () => {
   const navigate = useNavigate();
   const { setSelectedRover: setGlobalRover } = useApp();
 
-  const teamMembers = [
-    { name: "Bassant Tamer", role: "Team Member" },
-    { name: "Habiba Mohamed", role: "Team Member" },
-    { name: "Salma Osama", role: "Team Member" },
-    { name: "Omar Hassan", role: "Team Member" },
-    { name: "Ahmed Fayad", role: "Team Member" },
-    { name: "Mohammed Abdullah", role: "Team Member" },
-    { name: "Hassan Elzayat", role: "Team Member" },
-    { name: "Karim Salah", role: "Team Member" },
-    { name: "Menna Essam", role: "Team Member" },
-    { name: "Mahmoud Galal", role: "Team Member" },
-    { name: "Peter Ashraf", role: "Team Member" },
-  ];
-
   const pieData = [
     { name: "Active", value: (mockRovers as { status: string }[]).filter((r) => r.status === "active").length },
     { name: "Idle", value: (mockRovers as { status: string }[]).filter((r) => r.status === "idle").length },
@@ -37,10 +23,11 @@ const MainPage = () => {
   const COLORS = ["#2ec8cf", "#FBBF24", "#F87171"];
 
   return (
-    <div className="space-y-12 pb-12">
+    <div className="space-y-12">
       <RovexHero />
 
-      <section className="space-y-8">
+      {/* Live Overview Section */}
+      <section className="space-y-8 px-4">
         <div className="text-center space-y-2 py-8">
           <h2 className="text-3xl font-bold text-foreground">Live Overview</h2>
           <p className="text-sm text-muted-foreground">Monitor your fleet in real time</p>
@@ -86,7 +73,8 @@ const MainPage = () => {
         </div>
       </section>
 
-      <section className="relative py-16 px-8 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
+      {/* Discover Fleet Section */}
+      <section className="relative py-16 px-8 mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
         <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
         <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -103,7 +91,8 @@ const MainPage = () => {
         </div>
       </section>
 
-      <section className="relative py-12 px-8 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
+      {/* Fleet Insights Section */}
+      <section className="relative py-12 px-8 mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
         <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
         <div className="max-w-6xl mx-auto text-center space-y-8">
@@ -151,34 +140,84 @@ const MainPage = () => {
         </div>
       </section>
 
-      <section className="space-y-8 pt-12">
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <Users className="w-8 h-8 text-[#2ec8cf]" />
-            <h2 className="text-4xl font-bold text-foreground">About Our Team</h2>
+      {/* Footer */}
+      <footer className="w-full bg-[#2ec8cf] dark:bg-[#2ec8cf]/10 text-white dark:text-foreground border-t dark:border-[#2ec8cf]/20 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            
+            {/* Column 1: Brand */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Truck className="w-8 h-8 text-white dark:text-[#2ec8cf]" />
+                <h2 className="text-2xl font-bold tracking-tighter">ROVEX</h2>
+              </div>
+              <p className="text-white/80 dark:text-muted-foreground text-sm leading-relaxed max-w-xs">
+                Revolutionizing autonomous delivery systems with our advanced fleet of AI-powered rovers.
+              </p>
+              <div className="flex gap-4 pt-2">
+                <Github className="w-5 h-5 cursor-pointer hover:text-black dark:hover:text-[#2ec8cf] transition-colors" />
+                <Linkedin className="w-5 h-5 cursor-pointer hover:text-black dark:hover:text-[#2ec8cf] transition-colors" />
+                <Globe className="w-5 h-5 cursor-pointer hover:text-black dark:hover:text-[#2ec8cf] transition-colors" />
+              </div>
+            </div>
+
+            {/* Column 2: Quick Links */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold">Quick Navigation</h3>
+              <ul className="space-y-2 text-sm text-white/80 dark:text-muted-foreground">
+                <li onClick={() => navigate("/dashboard")} className="hover:text-white dark:hover:text-[#2ec8cf] cursor-pointer transition-colors">Dashboard</li>
+                <li onClick={() => navigate("/rovers")} className="hover:text-white dark:hover:text-[#2ec8cf] cursor-pointer transition-colors">Fleet Registry</li>
+                <li onClick={() => navigate("/live-tracking")} className="hover:text-white dark:hover:text-[#2ec8cf] cursor-pointer transition-colors">Live Tracking</li>
+              </ul>
+            </div>
+
+            {/* Column 3: Contact & Team */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold">Get In Touch</h3>
+              <div className="space-y-3 text-sm text-white/80 dark:text-muted-foreground">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-white dark:text-[#2ec8cf]" />
+                  <span>contact@rovex.ai</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="w-4 h-4 text-white dark:text-[#2ec8cf]" />
+                  <span>+20 123 456 7890</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-4 h-4 text-white dark:text-[#2ec8cf]" />
+                  <span>Cairo, Egypt</span>
+                </div>
+              </div>
+              
+              <div className="pt-4 border-t border-white/20 dark:border-[#2ec8cf]/20">
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/60 dark:text-muted-foreground/60">Developed by</p>
+                <div className="flex flex-col gap-1 mt-1">
+                  <a 
+                    href="https://www.linkedin.com/in/bassanttamer3/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium hover:text-black dark:hover:text-[#2ec8cf] transition-colors"
+                  >
+                    Bassant Tamer
+                  </a>
+                  <a 
+                    href="https://www.linkedin.com/in/habiba-magdy-66589b253/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium hover:text-black dark:hover:text-[#2ec8cf] transition-colors"
+                  >
+                    Habiba Mohamed
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="h-1 w-24 bg-gradient-to-r from-[#2ec8cf] to-[#2ec8cf]/50 rounded-full mx-auto mb-6" />
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            We are the Owner Rover Delivery Team, dedicated to revolutionizing autonomous delivery systems.
-          </p>
+
+          <div className="mt-12 pt-8 border-t border-white/10 dark:border-[#2ec8cf]/10 text-center text-xs text-white/60 dark:text-muted-foreground/50">
+            © {new Date().getFullYear()} ROVEX Fleet Management. All rights reserved.
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {teamMembers.map((member, index) => (
-            <Card key={index} className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-2 hover:border-[#2ec8cf]/30 bg-gradient-to-br from-background to-[#2ec8cf]/5">
-              <CardContent className="p-6 text-center space-y-4">
-                <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-[#2ec8cf]/20 to-[#2ec8cf]/40 flex items-center justify-center border-4 border-[#2ec8cf]/30 group-hover:border-[#2ec8cf]/60 transition-all duration-300 group-hover:scale-110">
-                  <Users className="w-12 h-12 text-[#2ec8cf]" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-foreground text-lg">{member.name}</h4>
-                  <p className="text-sm text-muted-foreground">{member.role}</p>
-                </div>
-                <div className="w-16 h-1 bg-[#2ec8cf] rounded-full mx-auto group-hover:w-full transition-all duration-300" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+      </footer>
     </div>
   );
 };
