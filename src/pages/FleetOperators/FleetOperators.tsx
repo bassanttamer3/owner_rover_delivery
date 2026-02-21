@@ -17,7 +17,8 @@ import {
   UserCircle, 
   Edit3, 
   Power,
-  AlertTriangle
+  AlertTriangle,
+  PlusCircle
 } from "lucide-react";
 import { 
   Dialog, 
@@ -257,8 +258,10 @@ const FleetOperators = () => {
               }}
               className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white font-black"
               size="sm"
-            >
-              Add Operator
+              
+            > 
+              <PlusCircle className="w-4 h-4 mr-2" />
+               Add Operator
             </Button>
             
             <Button
@@ -316,7 +319,7 @@ const FleetOperators = () => {
                           </Badge>
                         </td>
                         <td className="p-4">
-                          <Badge variant="outline" className={`rounded-full px-3 py-0.5 font-black border uppercase text-[10px] ${status.className}`}>
+                          <Badge variant="outline" className={`rounded-full px-3 py-0.5   text-[10px] ${status.className}`}>
                             {status.label}
                           </Badge>
                         </td>
