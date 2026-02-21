@@ -51,7 +51,7 @@ function StatusBadge({ status }: { status?: string }) {
     className: "bg-muted text-muted-foreground border-border",
   };
   return (
-    <Badge variant="outline" className={`font-medium capitalize border ${config.className}`}>
+    <Badge variant="outline" className={`font-normal border text-[11px] ${config.className}`}>
       {config.label}
     </Badge>
   );
@@ -88,7 +88,7 @@ const Companies = () => {
   }, []);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
-    if (!id) return; // Prevent calls on undefined IDs
+    if (!id) return;
     try {
       setListLoading(true);
       switch (newStatus) {
@@ -115,8 +115,6 @@ const Companies = () => {
     }
   };
 
-
-
   return (
     <div className="space-y-6 pt-6 pb-8">
       <div className="flex flex-col gap-1">
@@ -134,7 +132,7 @@ const Companies = () => {
           <div>
             <CardTitle className="text-base font-semibold">Companies</CardTitle>
             <CardDescription>
-              {listLoading ? "Loading…" : `${companies.length} ${companies.length === 1 ? "entity" : "entities"}`}
+              {companies.length} {companies.length === 1 ? "entity" : "entities"}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -179,7 +177,7 @@ const Companies = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
-                {listLoading ? (
+                {listLoading && companies.length === 0 ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i}>
                       <td className="px-4 py-3">
@@ -219,29 +217,26 @@ const Companies = () => {
                   companies.map((company) => (
                     <tr
                       key={company.company_id}
-                      className="hover:bg-muted/30 transition-colors group"
+                      onClick={() => navigate(`/companies/${company.company_id}`)}
+                      className="hover:bg-muted/30 transition-colors group cursor-pointer"
                     >
                       <td className="px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => navigate(`/companies/${company.company_id}`)}
-                          className="text-left font-semibold text-foreground group-hover:text-[#2ec8cf] transition-colors cursor-pointer"
-                        >
+                        <div className="text-left font-semibold text-foreground group-hover:text-[#2ec8cf] transition-colors">
                           {company.name}
-                        </button>
+                        </div>
                         <div className="text-xs text-muted-foreground font-mono mt-0.5">
                           {company.company_id}
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant="secondary" className="font-medium capitalize">
+                        <Badge variant="secondary" className="font-normal">
                           {company.business_type}
                         </Badge>
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge status={company.status} />
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -256,27 +251,37 @@ const Companies = () => {
                             <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground">
                               Management Actions
                             </DropdownMenuLabel>
-                            <DropdownMenuItem
-                              onClick={() => handleStatusChange(company.company_id, "active")}
-                              className="text-emerald-600 focus:text-emerald-600"
-                            >
-                              <ShieldCheck className="w-4 h-4 mr-2" />
-                              Activate Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleStatusChange(company.company_id, "suspended")}
-                              className="text-amber-600 focus:text-amber-600"
-                            >
-                              <ShieldAlert className="w-4 h-4 mr-2" />
-                              Suspend Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleStatusChange(company.company_id, "cancelled")}
-                              className="text-orange-600 focus:text-orange-600"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Cancel Subscription
-                            </DropdownMenuItem>
+                            
+                            {company.status !== 'active' && (
+                              <DropdownMenuItem
+                                onClick={() => handleStatusChange(company.company_id, "active")}
+                                className="text-emerald-600 focus:text-emerald-600"
+                              >
+                                <ShieldCheck className="w-4 h-4 mr-2" />
+                                Activate Account
+                              </DropdownMenuItem>
+                            )}
+
+                            {company.status === 'active' && (
+                              <DropdownMenuItem
+                                onClick={() => handleStatusChange(company.company_id, "suspended")}
+                                className="text-amber-600 focus:text-amber-600"
+                              >
+                                <ShieldAlert className="w-4 h-4 mr-2" />
+                                Suspend Account
+                              </DropdownMenuItem>
+                            )}
+
+                            {company.status !== 'cancelled' && (
+                              <DropdownMenuItem
+                                onClick={() => handleStatusChange(company.company_id, "cancelled")}
+                                className="text-orange-600 focus:text-orange-600"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Cancel Subscription
+                              </DropdownMenuItem>
+                            )}
+
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => navigate(`/companies/${company.company_id}`)}>
                               <LayoutGrid className="w-4 h-4 mr-2" />

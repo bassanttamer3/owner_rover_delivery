@@ -294,8 +294,7 @@ const handleSaveLocation = async () => {
 
   const totalPages = Math.ceil((company?.locations?.length || 0) / itemsPerPage);
 
-
-  if (loading) return <div className="p-12 text-center text-[#2ec8cf] animate-pulse font-bold tracking-widest">LOADING...</div>;
+  if (loading) return null; 
   if (!company) return <div className="p-12 text-center">Entity not found.</div>;
 
   return (
