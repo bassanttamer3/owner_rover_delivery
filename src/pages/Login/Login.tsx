@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import {
@@ -16,13 +16,25 @@ import { toast } from "sonner";
 import { login } from "@/api";
 import type { AxiosError } from "axios";
 import { LoginCredentials, LoginPath } from "@/common";
+import type { AuthUser } from "@/common/types/auth.types";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setAuth, user, loading: authLoading } = useAuth();
   const [loginType, setLoginType] = useState<LoginPath>("fleet");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (authLoading || !user) return;
+    navigate(user.password_must_change ? "/change-password" : "/dashboard", { replace: true });
+  }, [authLoading, user, navigate]);
+
+  if (!authLoading && user) {
+    return null;
+  }
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -37,11 +49,11 @@ const Login = () => {
       };
       const response = await login(data, loginType);
       const { user, tokens } = response.data.data;
-      localStorage.setItem("login_type", loginType);
-      localStorage.setItem("access_token", tokens.access_token);
-      localStorage.setItem("refresh_token", tokens.refresh_token);
-      localStorage.setItem("user_type", loginType);
-      localStorage.setItem("user", JSON.stringify(user));
+      setAuth(
+        { access_token: tokens.access_token, refresh_token: tokens.refresh_token },
+        user as AuthUser,
+        loginType
+      );
       toast.success("Login successful");
       if (user.password_must_change) {
         navigate("/change-password", { replace: true });

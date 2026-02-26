@@ -49,6 +49,7 @@ import {
   deactivateCompanyUser,
 } from "@/api";
 import { ListCompanyUsersInterface } from "@/common";
+import { useAuth } from "@/contexts/AuthContext";
 import CreateUserModal from "./CreateUserModal";
 
 type StatusFilter = ListCompanyUsersInterface["status"] | "all";
@@ -96,20 +97,9 @@ function StatusBadge({ status }: { status?: string }) {
   );
 }
 
-/** Logged-in user from localStorage (user_id/email used to hide actions for self) */
-function getLoggedInUser(): Record<string, unknown> | null {
-  try {
-    const raw = localStorage.getItem("user");
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
 const CompanyUsers = () => {
   const navigate = useNavigate();
+  const { user: loggedInUser } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [listLoading, setListLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,7 +107,6 @@ const CompanyUsers = () => {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<Record<string, unknown> | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{
     userId: string;
@@ -149,10 +138,6 @@ const CompanyUsers = () => {
   }, [statusFilter, roleFilter]);
 
   useEffect(() => {
-    setLoggedInUser(getLoggedInUser());
-  }, []);
-
-  useEffect(() => {
     fetchUsers(1);
   }, [fetchUsers]);
 
@@ -160,8 +145,8 @@ const CompanyUsers = () => {
     if (!loggedInUser) return false;
     const userId = rowUser.user_id;
     const email = rowUser.email;
-    const loggedUserId = loggedInUser.user_id as string | undefined;
-    const loggedEmail = (loggedInUser.email as string | undefined);
+    const loggedUserId = loggedInUser.user_id ?? loggedInUser.id;
+    const loggedEmail = loggedInUser.email;
     if (userId && loggedUserId && String(userId) === String(loggedUserId)) return true;
     if (email && loggedEmail && String(email).toLowerCase() === String(loggedEmail).toLowerCase())
       return true;

@@ -3,18 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-type RoverOrder = { id: string };
-type Rover = {
-  id: string;
-  name: string;
-  status: "active" | "idle" | "problem";
-  speed?: number;
-  currentOrder?: RoverOrder;
-  deliveryProgress?: number;
-};
-
+// Using 'any' for the rover prop to prevent Type Mismatch errors with LiveTracking
 type RoverCardProps = {
-  rover: Rover;
+  rover: any; 
   onDetails: () => void;
 };
 
@@ -61,7 +52,10 @@ const RoverCard = ({ rover, onDetails }: RoverCardProps) => {
         )}
 
         <button
-          onClick={onDetails}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevents double-triggering if Card also has onClick
+            onDetails();
+          }}
           className="mt-3 w-full bg-primary text-white py-1.5 rounded-lg hover:bg-primary/90 transition"
         >
           View Details
