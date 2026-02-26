@@ -19,6 +19,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getUserDetails, editUserData } from "@/api";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ROLES: Array<"company_admin" | "dispatcher" | "store_manager" | "customer_support" | "analyst"> = [
   "company_admin",
@@ -28,23 +29,14 @@ const ROLES: Array<"company_admin" | "dispatcher" | "store_manager" | "customer_
   "analyst",
 ];
 
-function getLoggedInUser(): Record<string, unknown> | null {
-  try {
-    const raw = localStorage.getItem("user");
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
 const Details = () => {
   const navigate = useNavigate();
   const { user_id } = useParams<{ user_id: string }>();
-  const [loggedInUser] = useState<Record<string, unknown> | null>(getLoggedInUser);
+  const { user: loggedInUser } = useAuth();
   const isSuperAdmin = loggedInUser?.role === "company_admin";
-  const isEditingSelf = user_id != null && String(loggedInUser?.user_id ?? "") === user_id;
+  const isEditingSelf =
+    user_id != null &&
+    String(loggedInUser?.user_id ?? loggedInUser?.id ?? "") === user_id;
   const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);

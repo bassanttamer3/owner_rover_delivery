@@ -16,9 +16,12 @@ import { toast } from "sonner";
 import { changePassword as changePasswordApi, refreshToken } from "@/api";
 import type { AxiosError } from "axios";
 import { ChangePasswordInterface } from "@/common";
+import { useAuth } from "@/contexts/AuthContext";
+import * as authStorage from "@/lib/auth-storage";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { setToken } = useAuth();
   const [activeTab, setActiveTab] = useState<"password" | "fleet">("password");
 
   // Password state
@@ -27,15 +30,17 @@ const Settings = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const refreshAccessToken = async (): Promise<string | null> => {
-    const token = localStorage.getItem("refresh_token");
+    const token = authStorage.getRefreshToken();
     if (!token) return null;
     try {
       const res = await refreshToken(token);
       const newAccess = res.data?.data?.access_token;
-      if (newAccess) localStorage.setItem("access_token", newAccess);
-      return newAccess ?? null;
-    } catch (err) {
-      console.error("Refresh token error:", err);
+      if (newAccess) {
+        setToken(newAccess);
+        return newAccess;
+      }
+      return null;
+    } catch {
       return null;
     }
   };
