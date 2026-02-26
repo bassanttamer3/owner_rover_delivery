@@ -10,8 +10,12 @@ import {
   Settings,
   Users,
   Building2,
+  Package2,
+  Ticket,
+  TicketPercent,
 } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -19,11 +23,12 @@ const menuItems = [
   { icon: BarChart, label: "Dashboard", path: "/dashboard" },
   { icon: MapPin, label: "Live Tracking", path: "/live-tracking" },
   { icon: Truck, label: "Rovers", path: "/rovers" },
-  { icon: Users, label: "Fleet Operators", path: "/fleet-operators" },
+  { icon: Package, label: "Orders", path: "/orders" },
+  { icon: Package2, label: "Products", path: "/products" },
+  { icon: TicketPercent, label: "Coupons", path: "/coupons" },
   { icon: Building2, label: "Companies", path: "/Companies" },
   { icon: Users, label: "Company Users", path: "/company-users" },
-  
-  { icon: Package, label: "Orders", path: "/orders" },
+  { icon: Users, label: "Fleet Operators", path: "/fleet-operators" },
   { icon: Bell, label: "Notifications", path: "/notifications" },
   { icon: Activity, label: "Activity Logs", path: "/activity-logs" },
   { icon: Settings, label: "Settings", path: "/settings" },
@@ -31,7 +36,7 @@ const menuItems = [
 
 const Sidebar = () => {
   const { isSidebarOpen } = useApp();
-  const userType = localStorage.getItem("user_type");
+  const { userType } = useAuth();
   const visibleItems =
     userType === "company"
       ? menuItems.filter(
@@ -39,7 +44,10 @@ const Sidebar = () => {
             item.path !== "/fleet-operators" && item.path !== "/Companies"
         )
       : userType === "fleet"
-        ? menuItems.filter((item) => item.path !== "/company-users")
+        ? menuItems.filter(
+          (item) => 
+            item.path !== "/company-users" && item.path !== "/products"
+        )
         : menuItems;
 
   return (
