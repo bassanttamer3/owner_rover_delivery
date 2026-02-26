@@ -3,10 +3,12 @@
  * All api/* modules should import API from here.
  */
 import axios, { type InternalAxiosRequestConfig } from "axios";
+import * as authStorage from "@/lib/auth-storage";
 
 export const API_BASE_URL: string =
     import.meta.env.VITE_API_BASE_URL ??
-    (globalThis as any).process?.env?.VITE_API_BASE_URL;
+    (typeof globalThis !== "undefined" && (globalThis as { process?: { env?: Record<string, string> } }).process?.env?.VITE_API_BASE_URL) ??
+    "";
 
 const API = axios.create({
     baseURL: API_BASE_URL,
@@ -21,7 +23,7 @@ const API = axios.create({
    Request: attach access token
 ================================ */
 API.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem("access_token");
+    const token = authStorage.getAccessToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -35,7 +37,7 @@ API.interceptors.response.use(
     (res) => res,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.clear();
+            authStorage.clear();
             window.location.href = "/login";
         }
         return Promise.reject(error);
