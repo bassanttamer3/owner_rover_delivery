@@ -6,3 +6,5 @@ export * from "./fleetOperators/fleetOperators.interfaces";
 export * from "./companies/companies.interfaces";
 export * from "./company-users/company-users.interfaces";
 export * from "./profile-management/profile-management.interfaces";
+export * from "./ecommerce/ecommerce.interfaces";
+export * from "./products/products.interfaces";

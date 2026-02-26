@@ -6,22 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { logout } from "@/api";
 import { toast } from "sonner";
 
 const Header = () => {
   const navigate = useNavigate();
   const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode } = useApp();
+  const { logout: authLogout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handlerLogout = async () => {
     try {
       await logout();
-      localStorage.clear();
-      window.location.href = "/login";
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message);
+    } catch {
+      // Still clear local auth if API call fails (e.g. network)
+    } finally {
+      authLogout();
+      navigate("/login", { replace: true });
     }
   };
 

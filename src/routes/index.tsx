@@ -27,6 +27,8 @@ import CompanyProfile from "@/pages/CompanyProfile/CompanyProfile";
 import ChangePassword from "@/pages/ChangePassword/ChangePassword";
 import Details from "@/pages/CompanyUsers/Details";
 import OperatorProfile from "@/pages/OperatorProfile/OperatorProfile";
+import Products from "@/pages/Products/Products";
+import ProductDetails from "@/pages/Products/Details";
 import Coupons from "@/pages/Coupons/Coupons";
 import CouponProfile from "@/pages/Coupons/CouponProfile";
 
@@ -81,6 +83,8 @@ export const router = createBrowserRouter([
               { path: "fleet-operators/:operator_id", element: <OperatorProfile /> },
               { path: "company-users", element: <CompanyUsers /> },
               { path: "company-users/:user_id", element: <Details /> },
+              { path: "products", element: <Products /> },
+              { path: "products/:product_id", element: <ProductDetails /> },
               { path: "coupons", element: <Coupons /> },
               { path: "coupons/:id", element: <CouponProfile /> },
               
