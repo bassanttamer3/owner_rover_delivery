@@ -46,7 +46,7 @@ const Sidebar = () => {
       : userType === "fleet"
         ? menuItems.filter(
           (item) => 
-            item.path !== "/company-users" && item.path !== "/products"
+            item.path !== "/company-users" && item.path !== "/products" && item.path !== "/coupons"
         )
         : menuItems;
 
