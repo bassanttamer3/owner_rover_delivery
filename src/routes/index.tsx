@@ -1,4 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -26,17 +27,21 @@ import CompanyProfile from "@/pages/CompanyProfile/CompanyProfile";
 import ChangePassword from "@/pages/ChangePassword/ChangePassword";
 import Details from "@/pages/CompanyUsers/Details";
 import OperatorProfile from "@/pages/OperatorProfile/OperatorProfile";
+import Coupons from "@/pages/Coupons/Coupons";
+import CouponProfile from "@/pages/Coupons/CouponProfile";
 
 
 function RootLayout() {
   return (
-    <AppProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <Outlet />
-      </TooltipProvider>
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Outlet />
+        </TooltipProvider>
+      </AppProvider>
+    </AuthProvider>
   );
 }
 
@@ -74,9 +79,11 @@ export const router = createBrowserRouter([
               { path: "companies/:company_id", element: <CompanyProfile /> },
               { path: "Companies", element: <Companies/> },
               { path: "fleet-operators/:operator_id", element: <OperatorProfile /> },
-
               { path: "company-users", element: <CompanyUsers /> },
               { path: "company-users/:user_id", element: <Details /> },
+              { path: "coupons", element: <Coupons /> },
+              { path: "coupons/:id", element: <CouponProfile /> },
+              
             ],
           },
         ],
