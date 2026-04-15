@@ -7,12 +7,12 @@ export function login(data: LoginCredentials, path: LoginPath) {
 }
 
 export function changePassword(data: ChangePasswordInterface) {
-  const path = authStorage.getLoginType() as LoginPath;
+  const path = authStorage.getUserType() as LoginPath;
   return API.post(`/auth/${path}/change-password`, data);
 }
 
 export function logoutAll() {
-  const path = authStorage.getLoginType() as LoginPath;
+  const path = authStorage.getUserType() as LoginPath;
   return API.post(`/auth/${path}/logout-all`);
 }
 
@@ -25,7 +25,7 @@ export function resetPassword(data: ResetPasswordInterface) {
 }
 
 export function logout() {
-  const path = authStorage.getLoginType() as LoginPath;
+  const path = authStorage.getUserType() as LoginPath;
   const data = {
     refresh_token: authStorage.getRefreshToken(),
   };

@@ -9,7 +9,6 @@ const KEYS = {
   REFRESH_TOKEN: "refresh_token",
   USER: "user",
   USER_TYPE: "user_type",
-  LOGIN_TYPE: "login_type",
 } as const;
 
 export type StoredUser = Record<string, unknown>;
@@ -51,14 +50,6 @@ export function getUserType(): string | null {
 
 export function setUserType(userType: string): void {
   localStorage.setItem(KEYS.USER_TYPE, userType);
-}
-
-export function getLoginType(): string | null {
-  return localStorage.getItem(KEYS.LOGIN_TYPE);
-}
-
-export function setLoginType(loginType: string): void {
-  localStorage.setItem(KEYS.LOGIN_TYPE, loginType);
 }
 
 /** Clear all auth data (e.g. on logout or 401). */

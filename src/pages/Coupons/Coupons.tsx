@@ -56,25 +56,31 @@ const Coupons = () => {
    * Fetching logic without hardcoded fallbacks to test real API permissions
    */
   const fetchCoupons = async () => {
-    setLoading(true);
-    try {
-      const user = getUser() as any;
-      const companyId = user?.company?._id; 
-      
-      const res = await listCoupons(companyId);
-      if (res.data.success) {
-        setCoupons(res.data.data);
-      }
-    } catch (err: any) {
-      const errorStatus = err.response?.status;
-      const errorMsg = err.response?.data?.message || "Failed to load coupons";
-      
-      console.error(`[API Error ${errorStatus}]:`, err.response?.data);
-      toast.error(`Backend Error (${errorStatus}): ${errorMsg}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const user = getUser() as any;
+    const companyId = user?.company?._id; 
+    
+    // Using 'any' to bypass strict interface mismatches with nested API data
+    const response: any = await listCoupons(companyId);
+
+    // Based on your network preview: 
+    // response.data (Axios) -> .data (Server Object) -> .data (Actual Array)
+    const actualCoupons = response?.data?.data?.data || []; 
+    
+    console.log("API Array Check:", actualCoupons);
+    
+    // Ensure state is always an array to prevent .filter() errors
+    setCoupons(Array.isArray(actualCoupons) ? actualCoupons : []);
+
+  } catch (err: any) {
+    console.error("Fetch Error:", err);
+    setCoupons([]); // Fallback to empty array on error
+    toast.error("Failed to load coupons");
+  } finally {
+    setLoading(false);
+  }
+};
 
   /**
    * Real Integration for soft-delete

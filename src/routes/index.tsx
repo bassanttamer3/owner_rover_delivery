@@ -13,6 +13,7 @@ import Dashboard from "@/pages/Dashboard/Dashboard";
 import LiveTracking from "@/pages/LiveTracking/LiveTracking";
 import Rovers from "@/pages/Rovers/Rovers";
 import Orders from "@/pages/Orders/Orders";
+import OrderDetails from "@/pages/Orders/OrderDetails";
 import Notifications from "@/pages/Notifications/Notifications";
 import ActivityLogs from "@/pages/ActivityLogs/ActivityLogs";
 import Settings from "@/pages/Settings/Settings";
@@ -73,6 +74,7 @@ export const router = createBrowserRouter([
               { path: "live-tracking", element: <LiveTracking /> },
               { path: "rovers", element: <Rovers /> },
               { path: "orders", element: <Orders /> },
+              { path: "orders/:order_id", element: <OrderDetails /> },
               { path: "notifications", element: <Notifications /> },
               { path: "activity-logs", element: <ActivityLogs /> },
               { path: "settings", element: <Settings /> },

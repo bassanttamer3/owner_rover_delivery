@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     authStorage.setAccessToken(tokens.access_token);
     authStorage.setRefreshToken(tokens.refresh_token);
     authStorage.setUserType(loginType);
-    authStorage.setLoginType(loginType);
     authStorage.setUser(newUser);
     setUser(newUser);
     setUserType(loginType);

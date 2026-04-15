@@ -9,6 +9,7 @@ import { useApp } from "@/contexts/AppContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { logout } from "@/api";
 import { toast } from "sonner";
+import { clear } from "@/lib/auth-storage";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,14 +18,10 @@ const Header = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handlerLogout = async () => {
-    try {
-      await logout();
-    } catch {
-      // Still clear local auth if API call fails (e.g. network)
-    } finally {
-      authLogout();
-      navigate("/login", { replace: true });
-    }
+    await logout();
+    clear();
+    authLogout();
+    navigate("/login", { replace: true });
   };
 
   return (
