@@ -1,129 +1,213 @@
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Clock, Package, AlertCircle, Truck } from "lucide-react";
-import mockRovers from "@/data/mockrovers.json";
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RefreshCw, Truck } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { getAllOrders } from "@/api";
+import type { Order } from "@/common/interfaces";
 
-type RoverWithOrder = {
-  id: string;
-  name: string;
-  status: string;
-  currentOrder: { id: string };
-  deliveryProgress: number;
+const orderStatusConfig: Record<string, { label: string; className: string }> = {
+  pending: { label: "Pending", className: "bg-amber-500/15 text-amber-600 border-amber-500/30" },
+  confirmed: { label: "Confirmed", className: "bg-blue-500/15 text-blue-600 border-blue-500/30" },
+  processing: { label: "Processing", className: "bg-sky-500/15 text-sky-600 border-sky-500/30" },
+  shipped: { label: "Shipped", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
+  delivered: { label: "Delivered", className: "bg-emerald-600/15 text-emerald-700 border-emerald-600/30" },
+  cancelled: { label: "Cancelled", className: "bg-muted text-muted-foreground border-border" },
 };
 
-const Orders = () => {
-  const rovers = mockRovers as RoverWithOrder[];
-  const orders = rovers
-    .filter((rover) => rover.currentOrder)
-    .map((rover) => ({
-      orderId: rover.currentOrder.id,
-      roverId: rover.id,
-      roverName: rover.name,
-      progress: rover.deliveryProgress,
-      status: rover.status,
-      estimatedTime: Math.round((100 - rover.deliveryProgress) / 10) + " min",
-    }));
+function OrderStatusBadge({ status }: { status?: string }) {
+  const config = orderStatusConfig[status?.toLowerCase() ?? ""] ?? {
+    label: status ?? "—",
+    className: "bg-muted text-muted-foreground border-border",
+  };
+  return (
+    <Badge variant="outline" className={`font-normal border text-[11px] ${config.className}`}>
+      {config.label}
+    </Badge>
+  );
+}
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge className="bg-success text-success-foreground animate-pulse/50">In Progress</Badge>;
-      case "problem":
-        return <Badge className="bg-destructive text-destructive-foreground animate-pulse">Issue</Badge>;
-      default:
-        return <Badge className="bg-warning text-warning-foreground">Pending</Badge>;
+const Orders = () => {
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [listLoading, setListLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const fetchOrders = async (page = 1) => {
+    setListLoading(true);
+    try {
+      const { data } = await getAllOrders({ page, limit: 10 });
+      // console.log(data.data);
+      setOrders(data.data.data ?? []);
+      setTotalPages(data.data.pagination?.total_pages ?? 0);
+      setCurrentPage(data.data.pagination?.page ?? page);
+    } catch (err) {
+      toast.error("Sync Failed");
+      setOrders([]);
+    } finally {
+      setListLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-          <Truck className="w-6 h-6 text-primary" /> Orders
+    <div className="space-y-6 pt-6 pb-8">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+          <Truck className="h-7 w-7 text-[#2ec8cf]" />
+          Orders
         </h1>
-        <p className="text-muted-foreground mt-1">Track all active delivery orders</p>
+        <p className="text-muted-foreground text-sm">
+          View and manage all orders
+        </p>
       </div>
 
-      <div className="flex gap-4 flex-wrap">
-        <Card className="p-4 flex-1 flex items-center gap-4">
-          <Package className="w-6 h-6 text-foreground/70" />
+      <Card className="border-border/60 shadow-sm overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
           <div>
-            <p className="text-sm text-muted-foreground">Total Orders</p>
-            <p className="text-2xl font-bold text-foreground mt-1">{orders.length}</p>
+            <CardTitle className="text-base font-semibold">Orders</CardTitle>
+            <CardDescription>
+              {orders.length} {orders.length === 1 ? "order" : "orders"}
+            </CardDescription>
           </div>
-        </Card>
-        <Card className="p-4 flex-1 flex items-center gap-4">
-          <Clock className="w-6 h-6 text-success/80" />
-          <div>
-            <p className="text-sm text-muted-foreground">In Progress</p>
-            <p className="text-2xl font-bold text-success mt-1">{orders.filter((o) => o.status === "active").length}</p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchOrders(currentPage)}
+              disabled={listLoading}
+              className="border-[#2ec8cf]/50 text-[#2ec8cf] hover:bg-[#2ec8cf]/10"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
+              Sync
+            </Button>
           </div>
-        </Card>
-        <Card className="p-4 flex-1 flex items-center gap-4">
-          <AlertCircle className="w-6 h-6 text-destructive/80" />
-          <div>
-            <p className="text-sm text-muted-foreground">Issues</p>
-            <p className="text-2xl font-bold text-destructive mt-1">{orders.filter((o) => o.status === "problem").length}</p>
-          </div>
-        </Card>
-      </div>
+        </CardHeader>
 
-      <Card className="overflow-x-auto">
-        <Table className="min-w-[600px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Rover</TableHead>
-              <TableHead>Progress</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Est. Time</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.length > 0 ? (
-              orders.map((order) => (
-                <TableRow key={order.orderId} className="hover:bg-muted/10 transition-colors">
-                  <TableCell className="font-medium">{order.orderId}</TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{order.roverName}</p>
-                      <p className="text-xs text-muted-foreground">{order.roverId}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-muted rounded-full h-2 max-w-[100px]">
-                        <div className="bg-gradient-to-r from-primary to-primary/70 h-2 rounded-full transition-all hover:h-3" style={{ width: `${order.progress}%` }} />
+        <CardContent className="p-0">
+          <div className="rounded-b-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40">
+                <tr className="border-b border-border/50">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Company
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Total Price
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Discount
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Order Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {listLoading && orders.length === 0 ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-5 w-28 mb-2" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-5 w-32" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-5 w-16" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-5 w-14" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                      </td>
+                    </tr>
+                  ))
+                ) : orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-12 text-center">
+                      <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                        <Truck className="h-10 w-10 opacity-50" />
+                        <p className="text-sm font-medium">No orders yet</p>
+                        <p className="text-xs max-w-xs">Orders will appear here when available.</p>
                       </div>
-                      <span className="text-sm font-medium">{order.progress}%</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {order.estimatedTime}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  No active orders
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                    </td>
+                  </tr>
+                ) : (
+                  (Array.isArray(orders) ? orders : []).map((order) => (
+                    <tr
+                      key={order._id}
+                      onClick={() => navigate(`/orders/${order._id}`)}
+                      className="hover:bg-muted/30 transition-colors cursor-pointer"
+                    >
+                      <td className="px-4 py-3 font-medium text-foreground">
+                        {order.user || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-foreground">
+                        {order.company || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-foreground">
+                        {typeof order.total_price === "number"
+                          ? order.total_price.toFixed(2)
+                          : order.total_price ?? "—"}
+                      </td>
+                      <td className="px-4 py-3 text-foreground">
+                        {typeof order.discount_amount === "number"
+                          ? order.discount_amount.toFixed(2)
+                          : order.discount_amount ?? "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <OrderStatusBadge status={order.order_status} />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {!listLoading && orders.length > 0 && (
+            <div className="flex justify-between items-center px-4 py-3 border-t border-border/50 bg-muted/20">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => fetchOrders(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              <span className="text-xs font-medium text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => fetchOrders(currentPage + 1)}
+                className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white border-0"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </CardContent>
       </Card>
     </div>
   );

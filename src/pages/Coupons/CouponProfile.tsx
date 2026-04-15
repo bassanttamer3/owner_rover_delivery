@@ -50,14 +50,19 @@ const CouponProfile = () => {
     min_purchase_amount: 0,
   });
 
-  const fetchCouponDetails = async () => {
+const fetchCouponDetails = async () => {
     setLoading(true);
     try {
       const user = getUser() as any;
       const companyId = user?.company?._id;
-      const res = await listCoupons(companyId);
+      
+      const res: any = await listCoupons(companyId);
+      
       if (res.data.success) {
-        const found = res.data.data.find((c: ICoupon) => c._id === id);
+        const couponsArray = res.data?.data?.data || [];
+        
+        const found = couponsArray.find((c: ICoupon) => c._id === id || c.code === id);
+        
         if (found) {
           setCoupon(found);
           setEditForm({
@@ -65,9 +70,12 @@ const CouponProfile = () => {
             max_usage: found.max_usage,
             min_purchase_amount: found.min_purchase_amount || 0,
           });
+        } else {
+          console.error("Coupon not found in the array:", id);
         }
       }
     } catch (err) {
+      console.error("Fetch Error:", err);
       toast.error("Failed to retrieve coupon details");
     } finally {
       setLoading(false);

@@ -48,10 +48,11 @@ const Products = () => {
         { page, limit: 10, title: searchTitle.trim() || undefined },
         companyId
       );
-      console.log(res.data);
-      setProducts(res.data.data ?? []);
-      setTotalPages(res.data.pagination?.pages ?? 1);
-      setCurrentPage(page);
+      const rows = res.data?.data.data;
+      // console.log(res.data?.data);
+      setProducts(Array.isArray(rows) ? rows : []);
+      setTotalPages(res.data?.data.pagination?.total_pages ?? 0);
+      setCurrentPage(res.data?.data.pagination?.page ?? page);
     } catch (err) {
       toast.error("Failed to load products");
     } finally {
@@ -184,7 +185,7 @@ const Products = () => {
                     </td>
                   </tr>
                 ) : (
-                  products.map((product) => (
+                  (Array.isArray(products) ? products : []).map((product) => (
                     <tr
                       key={product._id}
                       onClick={() => navigate(`/products/${product._id}`)}

@@ -8,3 +8,4 @@ export * from "./company-users/company-users.interfaces";
 export * from "./profile-management/profile-management.interfaces";
 export * from "./ecommerce/ecommerce.interfaces";
 export * from "./products/products.interfaces";
+export * from "./orders/orders.interfaces";
