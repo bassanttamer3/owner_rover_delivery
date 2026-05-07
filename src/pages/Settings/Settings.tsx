@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   Card,
@@ -11,19 +11,35 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Shield } from "lucide-react";
+import { CreditCard, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { changePassword as changePasswordApi, refreshToken } from "@/api";
 import type { AxiosError } from "axios";
 import { ChangePasswordInterface } from "@/common";
 import { useAuth } from "@/contexts/AuthContext";
 import * as authStorage from "@/lib/auth-storage";
+import StripeConnection from "../StripeConnection/StripeConnection";
 
 const Settings = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setToken } = useAuth();
   const [activeTab, setActiveTab] = useState<"password" | "fleet">("password");
-
+ useEffect(() => {
+  const status = searchParams.get('connect');
+  
+  if (status === 'success') {
+    setActiveTab("fleet"); 
+    toast.success("Stripe account linked successfully");
+        navigate("/settings", { replace: true }); 
+  } 
+  
+  else if (status === 'failed') {
+    setActiveTab("fleet");
+    toast.error("Failed to connect with Stripe.");
+    navigate("/settings", { replace: true });
+  }
+}, [searchParams, navigate]);
   // Password state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -96,20 +112,31 @@ const Settings = () => {
   return (
     <div className="max-w-4xl mx-auto pt-8 px-4 space-y-6">
       {/* Navbar Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
-        <button
-          className={`px-4 py-2 font-medium ${
-            activeTab === "password"
-              ? "border-b-2 border-[#2ec8cf] text-[#2ec8cf]"
-              : "text-gray-500 dark:text-gray-400"
-          }`}
-          onClick={() => setActiveTab("password")}
-        >
-          Change Password
-        </button>
-        
-      </div>
+<div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
+  <button
+    className={`flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200 ${
+      activeTab === "password"
+        ? "border-b-2 border-[#2ec8cf] text-[#2ec8cf]"
+        : "text-gray-500 dark:text-gray-400 hover:text-[#2ec8cf]"
+    }`}
+    onClick={() => setActiveTab("password")}
+  >
+    <Shield className="w-4 h-4" />
+    change password
+  </button>
 
+  <button
+    className={`flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200 ${
+      activeTab === "fleet"
+        ? "border-b-2 border-[#2ec8cf] text-[#2ec8cf]"
+        : "text-gray-500 dark:text-gray-400 hover:text-[#2ec8cf]"
+    }`}
+    onClick={() => setActiveTab("fleet")}
+  >
+    <CreditCard className="w-4 h-4" />
+    Bank Account
+  </button>
+</div>
       {/* Content */}
       {activeTab === "password" ? (
         <Card>
@@ -164,7 +191,10 @@ const Settings = () => {
             </form>
           </CardContent>
         </Card>
-      ) :null}
+      ) :<div className="animate-in fade-in duration-300">
+      <StripeConnection />
+    </div>}
+      
     </div>
   );
 };

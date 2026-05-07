@@ -11,4 +11,5 @@ export interface AuthUser {
   company_id?: string;
   password_must_change?: boolean;
   [key: string]: unknown;
+  
 }

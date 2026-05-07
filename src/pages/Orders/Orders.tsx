@@ -120,7 +120,7 @@ const Orders = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
-                {listLoading && orders.length === 0 ? (
+                {listLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i}>
                       <td className="px-4 py-3">

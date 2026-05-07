@@ -1,11 +1,18 @@
 import API from "@/api/base-api";
-import { 
-  CreateCompanyPayload, 
-  CompanyParams, 
-  CompanyLocation, 
+import {
+  CreateCompanyPayload,
+  CompanyParams,
+  CompanyLocation,
   CompanySettings,
-  CompanyStatusPayload
+  CompanyStatusPayload,
+  UpdateCompanyLocation,
+  StripeAuthorizeResponse,
+  StripeAuthorizePayload,
+  StripeStatusResponse,
+  OnboardingLinkResponse,
+  DisconnectResponse,
 } from "@/common";
+const PAYMENT_BASE_URL = "https://rovex.click/payment/api/v1";
 
 // --- Core Company Management ---
 
@@ -27,16 +34,16 @@ export function updateCompany(id: string, data: { name: string; contact: any }) 
 
 // --- Status & Subscription ---
 
-export function activateCompany(id: string, reason: string) {
-  return API.post(`/fleet/companies/${id}/activate`, { reason });
+export function activateCompany(id: string, reason?: string) {
+  return API.post(`/fleet/companies/${id}/activate`, reason ? { reason } : {});
 }
 
-export function suspendCompany(id: string, reason: string) {
-  return API.post(`/fleet/companies/${id}/suspend`, { reason });
+export function suspendCompany(id: string, reason?: string) {
+  return API.post(`/fleet/companies/${id}/suspend`, reason ? { reason } : {});
 }
 
-export function cancelCompanySubscription(id: string, reason: string) {
-  return API.post(`/fleet/companies/${id}/cancel`, { reason });
+export function cancelCompanySubscription(id: string, reason?: string) {
+  return API.post(`/fleet/companies/${id}/cancel`, reason ? { reason } : {});
 }
 
 export function updateCompanyStatus(id: string, data: CompanyStatusPayload) {
@@ -50,7 +57,7 @@ export function addCompanyLocation(companyId: string, data: CompanyLocation) {
 }
 
 /** Update existing location details */
-export function updateCompanyLocation(companyId: string, locationId: string, data: Partial<CompanyLocation>) {
+export function updateCompanyLocation(companyId: string, locationId: string, data: UpdateCompanyLocation) {
   return API.put(`/fleet/companies/${companyId}/locations/${locationId}`, data);
 }
 
@@ -89,5 +96,27 @@ export function updateCompanySettings(companyId: string, data: CompanySettings) 
 export function getCompanyStats(companyId: string) {
   return API.get(`/fleet/companies/${companyId}/stats`);
 }
+// stripe connect
+export function authorizeStripe(data: StripeAuthorizePayload) {
+  return API.post<StripeAuthorizeResponse>("/connect/authorize", data, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+}
 
+export const getStripeStatus = (companyId: string) => {
+  return API.get<StripeStatusResponse>(`/connect/${companyId}/status`, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+};
 
+export const getOnboardingLink = (companyId: string) => {
+  return API.get<OnboardingLinkResponse>(`/connect/${companyId}/onboarding-link`, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+};
+
+export const disconnectStripe = (companyId: string) => {
+  return API.delete<DisconnectResponse>(`/connect/${companyId}/disconnect`, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+};

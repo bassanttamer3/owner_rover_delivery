@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   RefreshCw,
-  LayoutGrid,
   MoreHorizontal,
   Trash2,
   ShieldCheck,
@@ -25,9 +24,19 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import {
   getCompanies,
@@ -65,18 +74,72 @@ const Companies = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedBusinessType, setSelectedBusinessType] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedSubscriptionTier, setSelectedSubscriptionTier] = useState("all");
+  const [statusActionLoading, setStatusActionLoading] = useState(false);
+  const [statusChangeConfirm, setStatusChangeConfirm] = useState<{
+    open: boolean;
+    companyId: string;
+    companyName: string;
+    newStatus: string;
+  }>({
+    open: false,
+    companyId: "",
+    companyName: "",
+    newStatus: "",
+  });
+  const [statusReason, setStatusReason] = useState("");
 
-  const fetchCompanies = async (page = 1) => {
+  const businessTypeFilters = [
+    { value: "all", label: "All business types" },
+    { value: "restaurant", label: "Restaurant" },
+    { value: "healthcare", label: "Healthcare" },
+    { value: "campus", label: "Campus" },
+    { value: "ecommerce", label: "Ecommerce" },
+    { value: "logistics", label: "Logistics" },
+  ];
+
+  const statusFilters = [
+    { value: "all", label: "All statuses" },
+    { value: "active", label: "Active" },
+    { value: "trial", label: "Trial" },
+    { value: "suspended", label: "Suspended" },
+    { value: "cancelled", label: "Cancelled" },
+  ];
+
+  const subscriptionTierFilters = [
+    { value: "all", label: "All tiers" },
+    { value: "starter", label: "Starter" },
+    { value: "professional", label: "Professional" },
+    { value: "enterprise", label: "Enterprise" },
+  ];
+
+  const fetchCompanies = async (
+    page = 1,
+    filters?: { business_type?: string; status?: string; subscription_tier?: string },
+  ) => {
     setListLoading(true);
     try {
-      const res = await getCompanies({ page, limit: 10 });
+      const businessTypeFilter = filters?.business_type ?? selectedBusinessType;
+      const statusFilter = filters?.status ?? selectedStatus;
+      const subscriptionTierFilter = filters?.subscription_tier ?? selectedSubscriptionTier;
+
+      const res = await getCompanies({
+        page,
+        limit: 10,
+        business_type: businessTypeFilter === "all" ? undefined : (businessTypeFilter as any),
+        status: statusFilter === "all" ? undefined : (statusFilter as any),
+        subscription_tier:
+          subscriptionTierFilter === "all" ? undefined : (subscriptionTierFilter as any),
+      });
       const responseData = res.data?.data;
       if (responseData) {
         setCompanies(responseData.companies || []);
         setTotalPages(responseData.pagination?.total_pages || 1);
         setCurrentPage(page);
       }
-    } catch (err) {
+    } catch {
       toast.error("Sync Failed");
     } finally {
       setListLoading(false);
@@ -84,25 +147,62 @@ const Companies = () => {
   };
 
   useEffect(() => {
-    fetchCompanies();
-  }, []);
+    fetchCompanies(1);
+  }, [selectedBusinessType, selectedStatus, selectedSubscriptionTier]);
 
-  const handleStatusChange = async (id: string, newStatus: string) => {
+  const handleSyncReset = () => {
+    const defaultBusinessType = "all";
+    const defaultStatus = "all";
+    const defaultSubscriptionTier = "all";
+
+    const isAlreadyDefault =
+      selectedBusinessType === defaultBusinessType &&
+      selectedStatus === defaultStatus &&
+      selectedSubscriptionTier === defaultSubscriptionTier;
+
+    setSelectedBusinessType(defaultBusinessType);
+    setSelectedStatus(defaultStatus);
+    setSelectedSubscriptionTier(defaultSubscriptionTier);
+    setCurrentPage(1);
+
+    // If filters are already at default, trigger a manual refresh.
+    // Otherwise, the filter effect above will fetch once.
+    if (isAlreadyDefault) {
+      fetchCompanies(1, {
+        business_type: defaultBusinessType,
+        status: defaultStatus,
+        subscription_tier: defaultSubscriptionTier,
+      });
+    }
+  };
+
+  const openStatusConfirm = (id: string, companyName: string, newStatus: string) => {
+    setStatusReason("");
+    setStatusChangeConfirm({
+      open: true,
+      companyId: id,
+      companyName,
+      newStatus,
+    });
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string, reason?: string) => {
     if (!id) return;
     try {
+      setStatusActionLoading(true);
       setListLoading(true);
       switch (newStatus) {
         case 'active':
-          await activateCompany(id, "Admin activation");
+          await activateCompany(id, reason);
           break;
         case 'suspended':
-          await suspendCompany(id, "Administrative review");
+          await suspendCompany(id, reason);
           break;
         case 'cancelled':
-          await cancelCompanySubscription(id, "Subscription ended by admin");
+          await cancelCompanySubscription(id, reason);
           break;
         default:
-          await updateCompanyStatus(id, { status: newStatus, reason: "Manual update" });
+          await updateCompanyStatus(id, { status: newStatus, reason });
       }
       toast.success(`Account ${newStatus} successfully`);
       fetchCompanies(currentPage);
@@ -111,8 +211,20 @@ const Companies = () => {
         description: err.response?.status === 404 ? "Endpoint not found on server" : "Manual update failed"
       });
     } finally {
+      setStatusActionLoading(false);
       setListLoading(false);
     }
+  };
+
+  const handleConfirmStatusChange = async () => {
+    const trimmedReason = statusReason.trim();
+    await handleStatusChange(
+      statusChangeConfirm.companyId,
+      statusChangeConfirm.newStatus,
+      trimmedReason || undefined,
+    );
+    setStatusChangeConfirm((prev) => ({ ...prev, open: false }));
+    setStatusReason("");
   };
 
   return (
@@ -135,7 +247,7 @@ const Companies = () => {
               {companies.length} {companies.length === 1 ? "entity" : "entities"}
             </CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               onClick={() => setShowFormModal(true)}
               className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white"
@@ -144,10 +256,43 @@ const Companies = () => {
               <PlusCircle className="w-4 h-4 mr-2" />
               Add Company
             </Button>
+            <select
+              className="h-9 rounded-md border border-input bg-muted/30 px-3 text-xs font-medium focus:ring-2 focus:ring-[#2ec8cf] transition-all min-w-[170px]"
+              value={selectedBusinessType}
+              onChange={(e) => setSelectedBusinessType(e.target.value)}
+            >
+              {businessTypeFilters.map((filter) => (
+                <option key={filter.value} value={filter.value} className="dark:bg-[#0f172a]">
+                  {filter.label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="h-9 rounded-md border border-input bg-muted/30 px-3 text-xs font-medium focus:ring-2 focus:ring-[#2ec8cf] transition-all min-w-[140px]"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              {statusFilters.map((filter) => (
+                <option key={filter.value} value={filter.value} className="dark:bg-[#0f172a]">
+                  {filter.label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="h-9 rounded-md border border-input bg-muted/30 px-3 text-xs font-medium focus:ring-2 focus:ring-[#2ec8cf] transition-all min-w-[140px]"
+              value={selectedSubscriptionTier}
+              onChange={(e) => setSelectedSubscriptionTier(e.target.value)}
+            >
+              {subscriptionTierFilters.map((filter) => (
+                <option key={filter.value} value={filter.value} className="dark:bg-[#0f172a]">
+                  {filter.label}
+                </option>
+              ))}
+            </select>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => fetchCompanies(currentPage)}
+              onClick={handleSyncReset}
               disabled={listLoading}
               className="border-[#2ec8cf]/50 text-[#2ec8cf] hover:bg-[#2ec8cf]/10"
             >
@@ -169,6 +314,9 @@ const Companies = () => {
                     Business Type
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Tier
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Status
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider w-24">
@@ -177,7 +325,7 @@ const Companies = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
-                {listLoading && companies.length === 0 ? (
+                {listLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i}>
                       <td className="px-4 py-3">
@@ -228,14 +376,15 @@ const Companies = () => {
                           {company.company_id}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <Badge variant="secondary" className="font-normal">
-                          {company.business_type}
-                        </Badge>
-                      </td>
+                      <td className="px-4 py-3">{company.business_type}</td>
+
+                      <td className="px-4 py-3">{company.subscription.tier}</td>
+
                       <td className="px-4 py-3">
                         <StatusBadge status={company.status} />
                       </td>
+
+
                       <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -251,10 +400,12 @@ const Companies = () => {
                             <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground">
                               Management Actions
                             </DropdownMenuLabel>
-                            
+
                             {company.status !== 'active' && (
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(company.company_id, "active")}
+                                onClick={() =>
+                                  openStatusConfirm(company.company_id, company.name, "active")
+                                }
                                 className="text-emerald-600 focus:text-emerald-600"
                               >
                                 <ShieldCheck className="w-4 h-4 mr-2" />
@@ -264,7 +415,9 @@ const Companies = () => {
 
                             {company.status === 'active' && (
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(company.company_id, "suspended")}
+                                onClick={() =>
+                                  openStatusConfirm(company.company_id, company.name, "suspended")
+                                }
                                 className="text-amber-600 focus:text-amber-600"
                               >
                                 <ShieldAlert className="w-4 h-4 mr-2" />
@@ -274,19 +427,15 @@ const Companies = () => {
 
                             {company.status !== 'cancelled' && (
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(company.company_id, "cancelled")}
+                                onClick={() =>
+                                  openStatusConfirm(company.company_id, company.name, "cancelled")
+                                }
                                 className="text-orange-600 focus:text-orange-600"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Cancel Subscription
                               </DropdownMenuItem>
                             )}
-
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => navigate(`/companies/${company.company_id}`)}>
-                              <LayoutGrid className="w-4 h-4 mr-2" />
-                              View Full Profile
-                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -329,6 +478,40 @@ const Companies = () => {
         onOpenChange={setShowFormModal}
         onSuccess={() => fetchCompanies(1)}
       />
+
+      <AlertDialog
+        open={statusChangeConfirm.open}
+        onOpenChange={(open) => {
+          if (statusActionLoading) return;
+          setStatusChangeConfirm((prev) => ({ ...prev, open }));
+          if (!open) setStatusReason("");
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm status change</AlertDialogTitle>
+            <AlertDialogDescription>
+              {`You are about to set `}
+              <span className="font-semibold text-primary">{statusChangeConfirm.companyName || "this company"}</span>
+              {` to `}
+              <span className="font-semibold">{statusChangeConfirm.newStatus || "a new status"}</span>.
+              Add a reason for this action.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            value={statusReason}
+            onChange={(e) => setStatusReason(e.target.value)}
+            placeholder="Reason (optional)"
+            disabled={statusActionLoading}
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={statusActionLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmStatusChange} disabled={statusActionLoading}>
+              {statusActionLoading ? "Updating..." : "Confirm"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
