@@ -37,7 +37,9 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   activateOperator, 
   suspendOperator, 
@@ -64,6 +66,8 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 
 const FleetOperators = () => {
   const navigate = useNavigate();
+  const { user: loggedInUser } = useAuth();
+  const isSuperAdmin = loggedInUser?.role === "super_admin";
   
   // --- State Management ---
   const [form, setForm] = useState({
@@ -92,6 +96,8 @@ const FleetOperators = () => {
   // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedRole, setSelectedRole] = useState("all");
   const ITEMS_PER_PAGE = 6;
 
   const permissionsList = ["COMPANY_VIEW", "COMPANY_EDIT", "ROVER_VIEW"];
@@ -101,6 +107,19 @@ const FleetOperators = () => {
     { value: "operations_manager", label: "Operations Manager" },
     { value: "support_engineer", label: "Support Engineer" },
     { value: "analyst", label: "Analyst" },
+  ];
+  const tableStatusFilters = [
+    { value: "all", label: "All statuses" },
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+    { value: "suspended", label: "Suspended" },
+  ];
+  const tableRoleFilters = [
+    { value: "all", label: "All roles" },
+    { value: "super_admin", label: "Super Admin" },
+    { value: "admin", label: "Admin" },
+    { value: "manager", label: "Manager" },
+    { value: "dispatcher", label: "Dispatcher" },
   ];
 
   const handleStatusChangeRequest = (operatorId: string, newStatus: string) => {
@@ -114,6 +133,8 @@ const FleetOperators = () => {
   const confirmStatusChange = async () => {
     const { operatorId, newStatus } = confirmModal;
     setConfirmModal((prev) => ({ ...prev, show: false }));
+
+    if (!isSuperAdmin) return;
     
     try {
       setListLoading(true);
@@ -145,17 +166,29 @@ const FleetOperators = () => {
     }
   };
 
-  const fetchOperators = async (page = 1) => {
+  const fetchOperators = async (
+    page = 1,
+    filters?: { status?: string; role?: string },
+  ) => {
     setListLoading(true);
     try {
-      const res = await getFleetOperators({ page, limit: ITEMS_PER_PAGE });
+      const statusFilter = filters?.status ?? selectedStatus;
+      const roleFilter = filters?.role ?? selectedRole;
+      const res = await getFleetOperators({
+        page,
+        limit: ITEMS_PER_PAGE,
+        status: statusFilter === "all" ? undefined : statusFilter,
+        role: roleFilter === "all" ? undefined : roleFilter,
+      });
       if (res.status === 204) {
         setOperators([]);
         return;
       }
       const responseData = res.data?.data;
       if (responseData) {
-        setOperators(responseData.operators || (Array.isArray(responseData) ? responseData : []));
+        setOperators(
+          responseData.operators || (Array.isArray(responseData) ? responseData : []),
+        );
         setTotalPages(responseData.pagination?.pages || 1);
         setCurrentPage(page);
       }
@@ -180,9 +213,25 @@ const FleetOperators = () => {
     setShowFormModal(true);
   };
 
+  const handleSyncReset = () => {
+    const defaultStatus = "all";
+    const defaultRole = "all";
+    const isAlreadyDefault =
+      selectedStatus === defaultStatus && selectedRole === defaultRole;
+
+    setSelectedStatus(defaultStatus);
+    setSelectedRole(defaultRole);
+    setCurrentPage(1);
+
+    // If filters are unchanged, force one refresh; otherwise effect will fetch once.
+    if (isAlreadyDefault) {
+      fetchOperators(1, { status: defaultStatus, role: defaultRole });
+    }
+  };
+
   useEffect(() => {
-    fetchOperators();
-  }, []);
+    fetchOperators(1);
+  }, [selectedStatus, selectedRole]);
 
   const togglePermission = (perm: string) => {
     setForm((prev) => ({
@@ -249,7 +298,7 @@ const FleetOperators = () => {
               Managing {operators.length} personnel entries
             </CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               onClick={() => {
                 setIsEditing(false);
@@ -263,11 +312,33 @@ const FleetOperators = () => {
               <PlusCircle className="w-4 h-4 mr-2" />
                Add Operator
             </Button>
-            
+            <select
+              className="h-9 rounded-md border border-input bg-muted/30 px-3 text-xs font-medium focus:ring-2 focus:ring-[#2ec8cf] transition-all min-w-[150px]"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              {tableStatusFilters.map((status) => (
+                <option key={status.value} value={status.value} className="dark:bg-[#0f172a]">
+                  {status.label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="h-9 rounded-md border border-input bg-muted/30 px-3 text-xs font-medium focus:ring-2 focus:ring-[#2ec8cf] transition-all min-w-[150px]"
+              value={selectedRole}
+              onChange={(e) => setSelectedRole(e.target.value)}
+            >
+              {tableRoleFilters.map((role) => (
+                <option key={role.value} value={role.value} className="dark:bg-[#0f172a]">
+                  {role.label}
+                </option>
+              ))}
+            </select>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => fetchOperators(currentPage)}
+              onClick={handleSyncReset}
+              disabled={listLoading}
               className="text-[#2ec8cf] border-[#2ec8cf]/20 hover:bg-[#2ec8cf]/10 font-bold"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${listLoading ? "animate-spin" : ""}`} /> 
@@ -288,10 +359,28 @@ const FleetOperators = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
-                {listLoading && operators.length === 0 ? (
+                {listLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td className="p-4">
+                        <Skeleton className="h-5 w-36 mb-2" />
+                        <Skeleton className="h-3 w-28" />
+                      </td>
+                      <td className="p-4">
+                        <Skeleton className="h-6 w-24 rounded-full" />
+                      </td>
+                      <td className="p-4">
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                      </td>
+                      <td className="p-4 text-right">
+                        <Skeleton className="h-8 w-8 ml-auto rounded-md" />
+                      </td>
+                    </tr>
+                  ))
+                ) : operators.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-12 text-center text-muted-foreground animate-pulse font-medium">
-                      Synchronizing directory...
+                    <td colSpan={4} className="p-12 text-center text-muted-foreground font-medium">
+                      No operators found for the selected filters.
                     </td>
                   </tr>
                 ) : (
@@ -341,30 +430,33 @@ const FleetOperators = () => {
                                 <Edit3 className="mr-2 h-4 w-4 opacity-70" /> Edit Details
                               </DropdownMenuItem>
 
-                              <DropdownMenuSeparator />
-
-                              {op.status === "active" ? (
+                              {isSuperAdmin && (
                                 <>
-                                  <DropdownMenuItem 
-                                    className="text-amber-600 focus:text-amber-600 focus:bg-amber-50 dark:focus:bg-amber-500/10 font-medium text-sm" 
-                                    onClick={() => handleStatusChangeRequest(opId, "suspended")}
-                                  >
-                                    <Power className="mr-2 h-4 w-4" /> Suspend
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem 
-                                    className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-500/10 font-medium text-sm" 
-                                    onClick={() => handleStatusChangeRequest(opId, "inactive")}
-                                  >
-                                    <Power className="mr-2 h-4 w-4" /> Deactivate
-                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  {op.status === "active" ? (
+                                    <>
+                                      <DropdownMenuItem 
+                                        className="text-amber-600 focus:text-amber-600 focus:bg-amber-50 dark:focus:bg-amber-500/10 font-medium text-sm" 
+                                        onClick={() => handleStatusChangeRequest(opId, "suspended")}
+                                      >
+                                        <Power className="mr-2 h-4 w-4" /> Suspend
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem 
+                                        className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-500/10 font-medium text-sm" 
+                                        onClick={() => handleStatusChangeRequest(opId, "inactive")}
+                                      >
+                                        <Power className="mr-2 h-4 w-4" /> Deactivate
+                                      </DropdownMenuItem>
+                                    </>
+                                  ) : (
+                                    <DropdownMenuItem 
+                                      className="text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 dark:focus:bg-emerald-500/10 font-medium text-sm" 
+                                      onClick={() => handleStatusChangeRequest(opId, "active")}
+                                    >
+                                      <Power className="mr-2 h-4 w-4" /> Activate Account
+                                    </DropdownMenuItem>
+                                  )}
                                 </>
-                              ) : (
-                                <DropdownMenuItem 
-                                  className="text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 dark:focus:bg-emerald-500/10 font-medium text-sm" 
-                                  onClick={() => handleStatusChangeRequest(opId, "active")}
-                                >
-                                  <Power className="mr-2 h-4 w-4" /> Activate Account
-                                </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -377,11 +469,13 @@ const FleetOperators = () => {
             </table>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
-            <Button variant="outline" size="sm" disabled={currentPage === 1 || listLoading} onClick={() => fetchOperators(currentPage - 1)} className="font-bold">Previous</Button>
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
-            <Button variant="outline" size="sm" disabled={currentPage >= totalPages || listLoading} onClick={() => fetchOperators(currentPage + 1)} className="bg-[#2ec8cf] text-white hover:bg-[#2ec8cf]/80 border-none font-bold">Next</Button>
-          </div>
+          {!listLoading && operators.length > 0 && (
+            <div className="flex justify-between items-center mt-4">
+              <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => fetchOperators(currentPage - 1)} className="font-bold">Previous</Button>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => fetchOperators(currentPage + 1)} className="bg-[#2ec8cf] text-white hover:bg-[#2ec8cf]/80 border-none font-bold">Next</Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

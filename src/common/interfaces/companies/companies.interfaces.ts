@@ -1,46 +1,29 @@
-/** Company Contact Information */
-export interface CompanyContact {
-  primary_contact: string;
-  email: string;
-  phone: string;
-  address: string;
-}
-
-/** Detailed Subscription Pricing */
-export interface SubscriptionPricing {
-  base_fee: number;
-  per_delivery_fee: number;
-  included_deliveries: number;
-  overage_rate: number;
-}
-
-/** Subscription Details */
-export interface Subscription {
-  tier: "starter" | "professional" | "enterprise";
-  billing_cycle: "monthly" | "yearly";
-  pricing?: SubscriptionPricing;
-  status?: string;
-  current_period_start?: string;
-  current_period_end?: string;
-  cancel_at_period_end?: boolean; // Added: To track if subscription will end soon
-}
-
-/** Operational Location Schema */
 export interface CompanyLocation {
   location_id?: string;
   name: string;
   address: string;
   coordinates: {
     type: "Point";
-    coordinates: [number, number]; // [longitude, latitude]
+    coordinates: [number, number];
   };
   operating_hours?: Record<string, { open: string; close: string }>;
   is_primary: boolean;
   active: boolean;
-  created_at?: string; // Added: For audit logs
+  created_at?: string;
 }
 
-/** Company Operational Settings */
+export interface UpdateCompanyLocation {
+  name: string;
+  address: string;
+  coordinates: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  operating_hours?: Record<string, { open: string; close: string }>;
+  is_primary: boolean;
+  active: boolean;
+}
+
 export interface CompanySettings {
   auto_dispatch: boolean;
   require_otp: boolean;
@@ -52,11 +35,10 @@ export interface CompanySettings {
     sms: boolean;
     webhook: boolean;
   };
-  updated_at?: string; // Added: To track last change
-  updated_by?: string; // Added: To track who made the change
+  updated_at?: string;
+  updated_by?: string;
 }
 
-/** Performance and Analytics Stats */
 export interface CompanyStats {
   total_deliveries: number;
   successful_deliveries: number;
@@ -64,87 +46,125 @@ export interface CompanyStats {
   average_delivery_time: number;
   customer_satisfaction: number;
   success_rate: number;
-  failure_rate: number;          
+  failure_rate: number;
   active_users: number;
-  monthly_deliveries: number;    
+  monthly_deliveries: number;
   active_locations: number;
-  total_locations: number;       
+  total_locations: number;
   assigned_rovers: number;
 }
 
-/** General Company Object (The full entity from GET) */
 export interface Company {
   company_id: string;
   name: string;
   business_type: "restaurant" | "healthcare" | "campus" | "ecommerce" | "logistics";
   status: "active" | "trial" | "suspended" | "cancelled";
-  contact: CompanyContact;
-  subscription: Subscription;
-  settings?: CompanySettings; // Added: Full settings object
+  contact: {
+    primary_contact: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+  subscription: {
+    renewal_date: string;
+    start_date: string;
+    tier: "starter" | "professional" | "enterprise";
+    billing_cycle: "monthly" | "yearly";
+    pricing?: {
+      base_fee: number;
+      per_delivery_fee: number;
+      included_deliveries: number;
+      overage_rate: number;
+    };
+    status?: string;
+  };
+  settings?: CompanySettings;
   locations: CompanyLocation[];
   assigned_rovers: string[];
-  stats?: CompanyStats; // Added: Statistics nested object
-  created_at: string; // Added: Audit fields
+  stats?: CompanyStats;
+  created_at: string;
   updated_at: string;
 }
 
-/** Subscription payload when creating a company (pricing required) */
-export interface CreateCompanySubscription {
-  tier: "starter" | "professional" | "enterprise";
-  billing_cycle: "monthly" | "yearly";
-  pricing: {
-    base_fee: number;
-    per_delivery_fee: number;
-    included_deliveries: number;
-    overage_rate: number;
-  };
-}
-
-/** Location payload when creating a company */
-export interface CreateCompanyLocation {
-  name: string;
-  address: string;
-  coordinates: {
-    type: "Point";
-    coordinates: [number, number]; // [longitude, latitude]
-  };
-  operating_hours?: Record<string, { open: string; close: string }>;
-  is_primary: boolean;
-  active: boolean;
-}
-
-/** Admin user when creating a company */
-export interface CreateCompanyAdminUser {
-  name: string;
-  email: string;
-  phone: string;
-  role: "company_admin";
-}
-
-/** Payload for creating a new company */
 export interface CreateCompanyPayload {
   name: string;
   business_type: "restaurant" | "healthcare" | "campus" | "ecommerce" | "logistics";
-  contact: CompanyContact;
-  subscription: CreateCompanySubscription;
-  locations: CreateCompanyLocation[];
+  contact: {
+    primary_contact: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+  subscription: {
+    tier: "starter" | "professional" | "enterprise";
+    billing_cycle: "monthly" | "yearly";
+    pricing: {
+      base_fee: number;
+      per_delivery_fee: number;
+      included_deliveries: number;
+      overage_rate: number;
+    };
+  };
+  locations: Array<{
+    name: string;
+    address: string;
+    coordinates: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+    operating_hours?: Record<string, { open: string; close: string }>;
+    is_primary: boolean;
+    active: boolean;
+  }>;
   assigned_rovers: string[];
-  admin_user: CreateCompanyAdminUser;
+  admin_user: {
+    name: string;
+    email: string;
+    phone: string;
+    role: "company_admin";
+  };
 }
 
-/** Payload for status updates */
 export interface CompanyStatusPayload {
   status?: string;
-  reason: string;
+  reason?: string;
 }
 
-/** Parameters for company list filtering */
 export interface CompanyParams {
   page?: number;
   limit?: number;
   status?: "active" | "trial" | "suspended" | "cancelled";
-  business_type?: string;
-  subscription_tier?: string;
+  business_type?: "restaurant" | "healthcare" | "campus" | "ecommerce" | "logistics";
+  subscription_tier?: "starter" | "professional" | "enterprise";
   search?: string;
   sort?: string;
+}
+export interface StripeAuthorizePayload {
+  companyId: string;
+  email: string;
+  name?: string;
+}
+
+export interface StripeAuthorizeResponse {
+  url: string;
+}
+export interface StripeStatusResponse {
+  isConnected: boolean;
+  isFullyActivated: boolean;
+  status: string;
+  details: {
+    accountId: string;
+    chargesEnabled: boolean;
+    payoutsEnabled: boolean;
+    detailsSubmitted: boolean;
+    livemode: boolean;
+  };
+}
+
+ export interface OnboardingLinkResponse {
+  url: string;
+}
+
+export interface DisconnectResponse {
+  message: string;
 }

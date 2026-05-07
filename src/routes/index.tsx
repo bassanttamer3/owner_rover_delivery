@@ -24,10 +24,10 @@ import RestPassword from "@/pages/ResetPassword/ResetPassword";
 import FleetOperators from "@/pages/FleetOperators/FleetOperators";
 import Companies from "@/pages/Companies/Companies";
 import CompanyUsers from "@/pages/CompanyUsers/CompanyUsers";
-import CompanyProfile from "@/pages/CompanyProfile/CompanyProfile";
+import CompanyProfile from "@/pages/Companies/CompanyProfile";
 import ChangePassword from "@/pages/ChangePassword/ChangePassword";
 import Details from "@/pages/CompanyUsers/Details";
-import OperatorProfile from "@/pages/OperatorProfile/OperatorProfile";
+import OperatorProfile from "@/pages/FleetOperators/OperatorProfile";
 import Products from "@/pages/Products/Products";
 import ProductDetails from "@/pages/Products/Details";
 import Coupons from "@/pages/Coupons/Coupons";
@@ -89,7 +89,7 @@ export const router = createBrowserRouter([
               { path: "products/:product_id", element: <ProductDetails /> },
               { path: "coupons", element: <Coupons /> },
               { path: "coupons/:id", element: <CouponProfile /> },
-              
+
             ],
           },
         ],
