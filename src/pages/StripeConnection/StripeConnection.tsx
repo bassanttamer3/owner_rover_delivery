@@ -99,7 +99,11 @@ export default function StripeConnection() {
     }
   };
 
-  
+  useEffect(() => {
+    if (connectStatus === 'success') {
+      fetchStatus();
+    }
+  }, [connectStatus, fetchStatus]);
 
   return (
     <Card className="border-gray-200 dark:border-gray-700 shadow-sm">
