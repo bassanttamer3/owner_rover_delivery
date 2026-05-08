@@ -23,9 +23,9 @@ import StripeConnection from "../StripeConnection/StripeConnection";
 const Settings = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setToken } = useAuth();
+  const { setToken, userType } = useAuth();  
   const [activeTab, setActiveTab] = useState<"password" | "fleet">("password");
- useEffect(() => {
+  useEffect(() => {
   const status = searchParams.get('connect');
   
   if (status === 'success') {
@@ -124,7 +124,7 @@ const Settings = () => {
     <Shield className="w-4 h-4" />
     change password
   </button>
-
+  {userType === "company" && (
   <button
     className={`flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200 ${
       activeTab === "fleet"
@@ -136,6 +136,7 @@ const Settings = () => {
     <CreditCard className="w-4 h-4" />
     Bank Account
   </button>
+  )}
 </div>
       {/* Content */}
       {activeTab === "password" ? (
