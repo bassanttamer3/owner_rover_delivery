@@ -11,13 +11,19 @@ export type AppContextValue = {
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
+const THEME_STORAGE_KEY = "isDarkMode";
 
 type AppProviderProps = { children: ReactNode };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedRover, setSelectedRover] = useState<unknown>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+    return localStorage.getItem(THEME_STORAGE_KEY) === "true";
+  });
   const location = useLocation();
 
   useEffect(() => {
@@ -32,6 +38,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     } else {
       document.documentElement.classList.remove("dark");
     }
+    localStorage.setItem(THEME_STORAGE_KEY, String(isDarkMode));
   }, [isDarkMode]);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);

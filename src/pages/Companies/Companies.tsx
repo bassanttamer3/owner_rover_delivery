@@ -228,11 +228,11 @@ const Companies = () => {
   };
 
   return (
-    <div className="space-y-6 pt-6 pb-8">
+    <div className="space-y-6 pt-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
           <Building2 className="h-7 w-7 text-[#2ec8cf]" />
-          Corporate Directory
+          Companies
         </h1>
         <p className="text-muted-foreground text-sm">
           Manage companies, subscriptions, and fleet assignments

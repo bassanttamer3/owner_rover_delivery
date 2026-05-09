@@ -36,7 +36,7 @@ const Dashboard = () => {
   const avgBattery = Math.round(rovers.reduce((sum, r) => sum + r.battery, 0) / rovers.length);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="text-muted-foreground mt-1">Welcome to your rover delivery control panel</p>
