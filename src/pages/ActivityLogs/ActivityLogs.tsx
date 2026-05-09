@@ -60,7 +60,7 @@ const ActivityLogs = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Activity Logs</h1>
         <p className="text-muted-foreground mt-1">Complete history of fleet activities</p>

@@ -24,8 +24,10 @@ const Settings = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setToken, userType } = useAuth();  
+  const isCompanyUser = userType === "company";
   const [activeTab, setActiveTab] = useState<"password" | "fleet">("password");
   useEffect(() => {
+  if (!isCompanyUser) return;
   const status = searchParams.get('connect');
   
   if (status === 'success') {
@@ -39,7 +41,7 @@ const Settings = () => {
     toast.error("Failed to connect with Stripe.");
     navigate("/settings", { replace: true });
   }
-}, [searchParams, navigate]);
+}, [searchParams, navigate, isCompanyUser]);
   // Password state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -124,7 +126,7 @@ const Settings = () => {
     <Shield className="w-4 h-4" />
     change password
   </button>
-  {userType === "company" && (
+  {isCompanyUser && (
   <button
     className={`flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200 ${
       activeTab === "fleet"
@@ -192,9 +194,9 @@ const Settings = () => {
             </form>
           </CardContent>
         </Card>
-      ) :<div className="animate-in fade-in duration-300">
+      ) : isCompanyUser ? <div className="animate-in fade-in duration-300">
       <StripeConnection />
-    </div>}
+    </div> : null}
       
     </div>
   );
