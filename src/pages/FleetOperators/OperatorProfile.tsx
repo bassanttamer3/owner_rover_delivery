@@ -85,9 +85,10 @@ const OperatorProfile = () => {
   const [editForm, setEditForm] = useState({ name: "", phone: "", role: "", permissions: [] as string[] });
   const rolesList = [
     { value: "super_admin", label: "Super Admin" },
-    { value: "admin", label: "Admin" },
-    { value: "manager", label: "Manager" },
-    { value: "dispatcher", label: "Dispatcher" },
+    { value: "fleet_manager", label: "Fleet Manager" },
+    { value: "operations_manager", label: "Operations Manager" },
+    { value: "support_engineer", label: "Support Engineer" },
+    { value: "analyst", label: "Analyst" },
   ];
   const permissionsList = ["COMPANY_VIEW", "COMPANY_EDIT", "ROVER_VIEW"];
 

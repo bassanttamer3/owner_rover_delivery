@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type AppContextValue = {
   isSidebarOpen: boolean;
@@ -25,12 +26,19 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     return localStorage.getItem(THEME_STORAGE_KEY) === "true";
   });
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (location.pathname === "/") {
       setIsSidebarOpen(false);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   useEffect(() => {
     if (isDarkMode) {

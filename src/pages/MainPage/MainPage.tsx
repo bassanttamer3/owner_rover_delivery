@@ -29,14 +29,14 @@ const MainPage = () => {
       {/* Live Overview Section */}
       <section className="space-y-8 px-4">
         <div className="text-center space-y-2 py-8">
-          <h2 className="text-3xl font-bold text-foreground">Live Overview</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Live Overview</h2>
           <p className="text-sm text-muted-foreground">Monitor your fleet in real time</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div
             onClick={() => navigate("/live-tracking")}
-            className="relative group rounded-2xl overflow-hidden shadow-lg cursor-pointer h-[500px]"
+            className="relative group rounded-2xl overflow-hidden shadow-lg cursor-pointer h-[280px] sm:h-[400px] md:h-[500px]"
           >
             <Lottie animationData={mapAnimation} loop autoplay className="w-full h-full object-cover" />
             <div className="absolute top-6 left-1/2 -translate-x-1/2 text-center space-y-1 z-10">
@@ -53,7 +53,7 @@ const MainPage = () => {
 
           <div
             onClick={() => navigate("/live-tracking")}
-            className="relative group rounded-2xl overflow-hidden shadow-lg cursor-pointer h-[500px]"
+            className="relative group rounded-2xl overflow-hidden shadow-lg cursor-pointer h-[280px] sm:h-[400px] md:h-[500px]"
           >
             <Lottie animationData={truckNavigation} loop autoplay className="w-full h-full object-cover" />
             <div className="absolute top-6 left-1/2 -translate-x-1/2 text-center space-y-1 z-10">
@@ -74,12 +74,12 @@ const MainPage = () => {
       </section>
 
       {/* Discover Fleet Section */}
-      <section className="relative py-16 px-8 mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
+      <section className="relative py-10 sm:py-16 px-4 sm:px-8 mx-0 sm:mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
         <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h2 className="text-4xl font-extrabold text-foreground">Discover Your Rovers Fleet</h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">Discover Your Rovers Fleet</h2>
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
             Explore all autonomous rovers in your fleet with a single click.
           </p>
           <button
@@ -92,12 +92,12 @@ const MainPage = () => {
       </section>
 
       {/* Fleet Insights Section */}
-      <section className="relative py-12 px-8 mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
+      <section className="relative py-10 sm:py-12 px-4 sm:px-8 mx-0 sm:mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
         <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
         <div className="max-w-6xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl font-extrabold text-foreground">Fleet Insights</h2>
-          <p className="text-muted-foreground text-lg">Get a quick overview of your fleet performance today</p>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">Fleet Insights</h2>
+          <p className="text-muted-foreground text-base sm:text-lg">Get a quick overview of your fleet performance today</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { type: "active", label: "Active Rovers", Icon: Truck, colorFrom: "from-[#2ec8cf]/10", colorTo: "to-[#2ec8cf]/20" },
@@ -142,7 +142,7 @@ const MainPage = () => {
 
       {/* Footer */}
       <footer className="w-full bg-[#2ec8cf] dark:bg-[#2ec8cf]/10 text-white dark:text-foreground border-t dark:border-[#2ec8cf]/20 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             
             {/* Column 1: Brand */}

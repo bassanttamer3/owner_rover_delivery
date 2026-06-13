@@ -125,7 +125,7 @@ const Coupons = () => {
       </div>
 
       <Card className="border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
           <div>
             <CardTitle className="text-base font-semibold">All Coupons</CardTitle>
             <CardDescription>{filteredCoupons.length} coupons retrieved</CardDescription>

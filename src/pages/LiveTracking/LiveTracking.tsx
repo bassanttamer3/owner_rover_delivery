@@ -37,7 +37,7 @@ const LiveTracking = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Navigation2 className="w-6 h-6 text-[#2ec8cf] animate-pulse" />
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Live Tracking</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Live Tracking</h1>
           </div>
           <p className="text-muted-foreground flex items-center gap-2">
             <span className="relative flex h-2 w-2">
@@ -49,9 +49,9 @@ const LiveTracking = () => {
         </div>
       </div>
 
-      <div className="h-[calc(100vh-14rem)] grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:h-[calc(100vh-14rem)]">
         {/* Map View Area (Takes 3 columns now for better visibility) */}
-        <div className="lg:col-span-3 rounded-2xl overflow-hidden shadow-2xl border bg-background relative group">
+        <div className="lg:col-span-3 rounded-2xl overflow-hidden shadow-2xl border bg-background relative group min-h-[280px] h-[45vh] sm:h-[50vh] lg:h-full">
           <MapPanel
             rovers={roversData}
             selectedRover={selectedRover as RoverForMap | null}
@@ -68,7 +68,7 @@ const LiveTracking = () => {
         </div>
 
         {/* Control Panel (Sidebar) */}
-        <div className="lg:col-span-1 rounded-2xl border bg-gradient-to-br from-background to-[#2ec8cf]/5 shadow-xl flex flex-col overflow-hidden">
+        <div className="lg:col-span-1 rounded-2xl border bg-gradient-to-br from-background to-[#2ec8cf]/5 shadow-xl flex flex-col overflow-hidden min-h-[280px] max-h-[55vh] lg:max-h-none lg:h-full">
           <div className="p-5 border-b space-y-5 bg-background/50 backdrop-blur-sm">
             <h2 className="text-xl font-bold flex items-center gap-2">
               Fleet Control
