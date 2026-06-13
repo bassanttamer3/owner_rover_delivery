@@ -73,11 +73,11 @@ const Login = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-cyan-100" />
       <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-300/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm z-10">
-        <CardHeader className="text-center space-y-8 pb-10">
-          <img src={logo} alt="ROVEX" className="h-28 mx-auto" />
+      <Card className="w-full max-w-md mx-4 sm:mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-sm z-10">
+        <CardHeader className="text-center space-y-6 sm:space-y-8 pb-8 sm:pb-10">
+          <img src={logo} alt="ROVEX" className="h-20 sm:h-28 mx-auto" />
           <div>
-            <CardTitle className="text-4xl font-bold text-gray-900">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl sm:text-4xl font-bold text-gray-900">Welcome Back</CardTitle>
             <CardDescription className="text-gray-600 text-lg">Sign in to ROVEX Platform</CardDescription>
           </div>
           <div className="flex gap-3">
