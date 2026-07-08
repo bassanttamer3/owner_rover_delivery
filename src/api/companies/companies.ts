@@ -11,6 +11,10 @@ import {
   StripeStatusResponse,
   OnboardingLinkResponse,
   DisconnectResponse,
+  SetupIntentResponse,
+  SetupIntentRequest,
+  SetupIntentDetailsResponse,
+  PaymentMethodsResponse,
 } from "@/common";
 const PAYMENT_BASE_URL = "https://rovex.click/payment/api/v1";
 
@@ -120,3 +124,42 @@ export const disconnectStripe = (companyId: string) => {
     baseURL: PAYMENT_BASE_URL,
   });
 };
+
+export function createSetupIntent(data: SetupIntentRequest) {
+  return API.post<SetupIntentResponse>("/payment-methods/setup-intent", data, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+}
+
+export function getSetupIntentDetails(setupIntentId: string) {
+  return API.get<SetupIntentDetailsResponse>(`/payment-methods/setup-intent/${setupIntentId}`, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+}
+
+export function getCustomerPaymentMethods(type: string = "card") {
+  return API.get<PaymentMethodsResponse>(`/payment-methods/customer`, {
+    baseURL: PAYMENT_BASE_URL,
+    params: { 
+      type, 
+      limit: 10 
+    },
+  });
+}
+
+export function deletePaymentMethod(paymentMethodId: string) {
+  return API.post(`/payment-methods/detach/${paymentMethodId}`, {}, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+}
+export function setDefaultPaymentMethod(paymentMethodId: string) {
+  return API.post(`/payment-methods/default`, { paymentMethodId }, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+}
+
+export function getDefaultPaymentMethod() {
+  return API.get(`/payment-methods/customer/default`, {
+    baseURL: PAYMENT_BASE_URL,
+  });
+}

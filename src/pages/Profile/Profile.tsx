@@ -1,5 +1,5 @@
 import { Mail, Phone, UserCircle, Shield, Pencil, Trash2, Lock, IdCard, Building2, Clock, CheckCircle, Eye, Settings, Plus, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { profilePicUrls } from "@/assets/profilepic";
 import { getProfile, editProfileDetails } from "@/api";
@@ -93,17 +93,17 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="p-8 bg-gray-50 min-h-screen dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">Loading profile...</p>
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <p className="text-muted-foreground">Loading profile...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen dark:bg-gray-900">
+    <div className="space-y-6 pt-6 pb-4 text-foreground transition-colors duration-200">
       {/* Header section with Actions */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold text-gray-700 dark:text-white flex items-center gap-2">
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold flex items-center gap-2">
           User Profile
         </h1>
         <div className="flex gap-2">
@@ -113,7 +113,7 @@ const Profile = () => {
                 type="button"
                 onClick={cancelEditing}
                 disabled={saving}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium rounded-xl shadow-sm hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition-all duration-200"
+                className="inline-flex items-center gap-2 px-4 py-2.5 border border-border bg-card text-foreground font-medium rounded-xl shadow-sm hover:bg-accent disabled:opacity-50 transition-all duration-200"
               >
                 <X size={18} />
                 Cancel
@@ -208,28 +208,28 @@ const Profile = () => {
         </div>
 
         {/* Right Column: Permissions grouped by subject, actions listed (e.g. subject.action → * as ALL) */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center">
-            <h3 className="font-bold text-gray-700 dark:text-white flex items-center gap-2">
+        <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+          <div className="p-5 border-b border-border flex justify-between items-center">
+            <h3 className="font-bold flex items-center gap-2">
               Permissions
             </h3>
           </div>
           <div className="p-5 space-y-4">
             {subjectEntries.length === 0 ? (
-              <p className="text-sm text-gray-400 py-4">—</p>
+              <p className="text-sm text-muted-foreground py-4">—</p>
             ) : (
               subjectEntries.map(([subject, actions]) => (
-                <div key={subject} className="border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0 pb-4 last:pb-0">
-                  <p className="text-sm font-semibold text-gray-700 dark:text-white capitalize mb-2">{subject}</p>
+                <div key={subject} className="border-b border-border last:border-0 last:pb-0 pb-4 last:pb-0">
+                  <p className="text-sm font-semibold capitalize mb-2">{subject}</p>
                   <div className="flex flex-wrap gap-2">
                     {actions.map((action) => {
                       const Icon = getActionIcon(action);
                       return (
                         <span
                           key={action}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted text-muted-foreground text-xs font-medium"
                         >
-                          <Icon size={12} className="text-gray-400 shrink-0" /> {action}
+                          <Icon size={12} className="text-muted-foreground/70 shrink-0" /> {action}
                         </span>
                       );
                     })}
@@ -245,12 +245,12 @@ const Profile = () => {
 };
 
 // Helper Component for Info Cards
-const InfoCard = ({ icon, label, value }: { icon: any; label: string; value: string }) => (
-  <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
-    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">{icon}</div>
+const InfoCard = ({ icon, label, value }: { icon: ReactNode; label: string; value: string }) => (
+  <div className="bg-card p-4 rounded-2xl shadow-sm border border-border flex items-center gap-4">
+    <div className="p-3 bg-muted rounded-xl">{icon}</div>
     <div>
-      <p className="text-[11px] text-gray-400 font-medium uppercase tracking-tight">{label}</p>
-      <p className="text-base font-bold text-gray-800 dark:text-white">{value}</p>
+      <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-tight">{label}</p>
+      <p className="text-base font-bold">{value}</p>
     </div>
   </div>
 );

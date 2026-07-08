@@ -168,3 +168,47 @@ export interface StripeStatusResponse {
 export interface DisconnectResponse {
   message: string;
 }
+
+// Request Body
+export interface SetupIntentRequest {
+  paymentMethodTypes: string[];
+}
+
+// Response Data
+export interface SetupIntentResponse {
+  success: boolean;
+  data: {
+    setupIntentId: string;
+    clientSecret: string;
+    status: string;
+    publishableKey: string;
+  };
+}
+
+export interface SetupIntentDetailsResponse {
+  success: boolean;
+  data: {
+    id: string;
+    status: string;
+    client_secret: string;
+    payment_method: string | null;
+    usage: string;
+  };
+}
+
+export interface StripeCard {
+  id: string;
+  brand: string; 
+  last4: string;  
+  expMonth: number;
+  expYear: number;
+}
+
+export interface PaymentMethodsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    data: StripeCard[]; 
+    hasMore: boolean;   
+  };
+}

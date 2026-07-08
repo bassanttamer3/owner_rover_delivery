@@ -751,7 +751,7 @@ const CompanyProfile = () => {
       </Card>
 
       <Card className="border-border/60">
-        <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-2">
           <div>
             <CardTitle className="text-base flex items-center gap-2">
               <MapPin className="w-4 h-4 text-primary" />
@@ -879,7 +879,7 @@ const CompanyProfile = () => {
       </Card>
 
       <Card className="border-border/60">
-        <CardHeader className="flex flex-row items-center justify-between gap-2 pb-3">
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Tablet className="w-4 h-4 text-primary" />
             Assigned Fleet ({company.assigned_rovers?.length || 0})

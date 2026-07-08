@@ -71,7 +71,7 @@ const Products = () => {
     <div className="space-y-6 pt-6 pb-8">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-          <Package className="h-7 w-7 text-[#2ec8cf]" />
+          {/* <Package className="h-7 w-7 text-[#2ec8cf]" /> */}
           Products
         </h1>
         <p className="text-muted-foreground text-sm">
@@ -80,7 +80,7 @@ const Products = () => {
       </div>
 
       <Card className="border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
           <div>
             <CardTitle className="text-base font-semibold">Product list</CardTitle>
             <CardDescription>
@@ -120,8 +120,8 @@ const Products = () => {
         </CardHeader>
 
         <CardContent className="p-0">
-          <div className="rounded-b-lg overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="rounded-b-lg overflow-x-auto">
+            <table className="w-full text-sm min-w-[640px]">
               <thead className="bg-muted/40">
                 <tr className="border-b border-border/50">
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">

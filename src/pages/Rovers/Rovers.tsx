@@ -35,7 +35,7 @@ const Rovers = () => {
   return (
     <div className="space-y-6 pt-6">
       <div>
-        <h1 className="text-3xl font-bold">Rovers Fleet</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Rovers Fleet</h1>
         <p className="text-muted-foreground">Monitor and manage all autonomous rovers</p>
       </div>
 

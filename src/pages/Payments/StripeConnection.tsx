@@ -8,12 +8,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CreditCard, Loader2, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
-import { 
-  authorizeStripe, 
-  getStripeStatus, 
-  getOnboardingLink, 
-  disconnectStripe 
+import {
+  CreditCard,
+  CheckCircle2,
+  AlertCircle,
+  Trash2,
+} from "lucide-react";
+import {
+  authorizeStripe,
+  getStripeStatus,
+  getOnboardingLink,
+  disconnectStripe,
 } from "@/api/companies/companies";
 import {
   AlertDialog,
@@ -28,14 +33,19 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { StripeStatusResponse } from "@/common/interfaces/companies/companies.interfaces";
 
-export default function StripeConnection() {
+export default function StripeConnection({
+  onVerificationSuccess,
+  isMiniView,
+}: {
+  onVerificationSuccess?: () => void;
+  isMiniView?: boolean;
+}) {
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(true);
   const [stripeStatus, setStripeStatus] = useState<StripeStatusResponse | null>(null);
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const connectStatus = searchParams.get('connect');
-
+  const connectStatus = searchParams.get("connect");
   const [showConfirm, setShowConfirm] = useState(false);
 
   const fetchStatus = useCallback(async () => {
@@ -43,12 +53,15 @@ export default function StripeConnection() {
     try {
       const response = await getStripeStatus(user.company_id);
       setStripeStatus(response.data);
+      if (response.data.isFullyActivated) {
+        onVerificationSuccess?.();
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setStatusLoading(false);
     }
-  }, [user?.company_id]);
+  }, [user?.company_id, onVerificationSuccess]);
 
   useEffect(() => {
     fetchStatus();
@@ -99,11 +112,58 @@ export default function StripeConnection() {
     }
   };
 
-  useEffect(() => {
-    if (connectStatus === 'success') {
-      fetchStatus();
-    }
-  }, [connectStatus, fetchStatus]);
+  if (isMiniView) {
+    return (
+      <div className="space-y-6 p-6 rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between gap-2">
+        <CardTitle>Stripe Integration </CardTitle>
+        
+        {stripeStatus?.isFullyActivated && (
+          <div className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full border  text-[10px] font-medium shrink-0">
+            <CheckCircle2 className="w-3 h-3" />
+            Account Verified
+          </div>
+        )}
+      </div>
+
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Your Stripe account is currently active. Payouts and payments are being processed normally.
+      </p>
+        <Button
+          variant="ghost"
+          onClick={() => setShowConfirm(true)}
+          disabled={loading}
+          className="w-full justify-start px-0 text-xs text-red-500 hover:text-red-600 hover:bg-transparent"
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Disconnect Stripe Account
+        </Button>
+
+        <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+          <AlertDialogContent className="rounded-[1.5rem] border-border/50 bg-card z-[999]">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-black">Confirm Action</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to proceed? This will disconnect your Stripe account.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="gap-2">
+              <AlertDialogCancel className="border-none bg-muted rounded-xl">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  handleDisconnect();
+                  setShowConfirm(false);
+                }}
+                className="rounded-xl bg-[#2ec8cf] text-white hover:bg-[#2ec8cf]/90"
+              >
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    );
+  }
 
   return (
     <Card className="border-gray-200 dark:border-gray-700 shadow-sm">
@@ -117,13 +177,6 @@ export default function StripeConnection() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {connectStatus === 'success' && (
-          <div className="mb-6 flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
-            <CheckCircle2 className="w-5 h-5" />
-            <p className="text-sm font-medium">Stripe account linked successfully!</p>
-          </div>
-        )}
-
         <div className="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-800/30 p-8 text-center">
           {stripeStatus?.isFullyActivated ? (
             <div className="space-y-4">
@@ -134,11 +187,11 @@ export default function StripeConnection() {
               <p className="text-sm text-gray-500 max-w-sm mx-auto">
                 Your account is fully connected and ready to receive payments.
               </p>
-              <Button 
-                variant="ghost" 
-                onClick={() => setShowConfirm(true)} 
+              <Button
+                variant="ghost"
+                onClick={() => setShowConfirm(true)}
                 disabled={loading}
-                className="text-xs text-gray-400 hover:text-red-500 hover:bg-transparent bg-transparent shadow-none border-none active:bg-transparent focus:bg-transparent"
+                className="text-xs text-gray-400 hover:text-red-500 hover:bg-transparent"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Disconnect Account
@@ -156,16 +209,11 @@ export default function StripeConnection() {
               <Button onClick={handleResumeOnboarding} disabled={loading} className="bg-[#2ec8cf] text-white">
                 Complete Onboarding
               </Button>
-              <div className="pt-2">
-                <Button variant="ghost" onClick={() => setShowConfirm(true)} disabled={loading} className="text-xs text-gray-400 hover:text-[#2ec8cf] hover:bg-transparent bg-transparent shadow-none border-none active:bg-transparent focus:bg-transparent">
-                  Cancel and start over
-                </Button>
-              </div>
             </div>
           ) : (
             <>
               <p className="mb-6 text-sm text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
-                You will be redirected to Stripe to complete your onboarding process and verify your business account.
+                You will be redirected to Stripe to complete your onboarding process.
               </p>
               <Button
                 onClick={handleConnectStripe}
@@ -182,21 +230,19 @@ export default function StripeConnection() {
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent className="rounded-[1.5rem] border-border/50 bg-card z-[999]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-black text-foreground">Confirm Action</AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground">
+            <AlertDialogTitle className="font-black">Confirm Action</AlertDialogTitle>
+            <AlertDialogDescription>
               Are you sure you want to proceed? This will disconnect your Stripe account.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="border-none bg-muted text-muted-foreground rounded-xl">
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel className="border-none bg-muted rounded-xl">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 handleDisconnect();
                 setShowConfirm(false);
               }}
-              className="rounded-xl bg-[#2ec8cf] text-white shadow-lg shadow-[#2ec8cf]/20 hover:bg-[#2ec8cf]/90"
+              className="rounded-xl bg-[#2ec8cf] text-white hover:bg-[#2ec8cf]/90"
             >
               Confirm
             </AlertDialogAction>

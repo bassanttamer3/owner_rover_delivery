@@ -179,7 +179,7 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <div className="space-y-6 pt-6 pb-8">
-        <Button
+        {/* <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/products")}
@@ -187,7 +187,7 @@ const ProductDetails = () => {
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to products
-        </Button>
+        </Button> */}
         <Card className="border-border/60">
           <CardContent className="py-12 text-center text-muted-foreground">
             <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -202,7 +202,7 @@ const ProductDetails = () => {
   return (
     <div className="space-y-6 pt-6 pb-8">
       <div className="flex flex-col gap-4">
-        <Button
+        {/* <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/products")}
@@ -210,11 +210,11 @@ const ProductDetails = () => {
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to products
-        </Button>
+        </Button> */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-              <Package className="h-7 w-7 text-[#2ec8cf]" />
+              {/* <Package className="h-7 w-7 text-[#2ec8cf]" /> */}
               {isEditing ? editTitle : product.title}
             </h1>
             <p className="text-muted-foreground text-sm">

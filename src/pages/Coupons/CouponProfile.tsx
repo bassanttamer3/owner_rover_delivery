@@ -55,14 +55,14 @@ const fetchCouponDetails = async () => {
     try {
       const user = getUser() as any;
       const companyId = user?.company?._id;
-      
+
       const res: any = await listCoupons(companyId);
-      
+
       if (res.data.success) {
         const couponsArray = res.data?.data?.data || [];
-        
+
         const found = couponsArray.find((c: ICoupon) => c._id === id || c.code === id);
-        
+
         if (found) {
           setCoupon(found);
           setEditForm({
@@ -150,12 +150,12 @@ const fetchCouponDetails = async () => {
     <div className="p-6 bg-background min-h-screen text-foreground transition-colors duration-200">
       {/* Header Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <button
+        {/* <button
           onClick={() => navigate(-1)}
           className="flex items-center text-muted-foreground hover:text-[#2ec8cf] transition-colors font-medium"
         >
           <ArrowLeft className="w-5 h-5 mr-2" /> Back to Coupons
-        </button>
+        </button> */}
 
         <div className="flex gap-3">
           {isEditing ? (

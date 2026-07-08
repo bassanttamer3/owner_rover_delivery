@@ -102,16 +102,12 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-cyan-100" />
-      <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-300/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm z-10">
+      <Card className="w-full max-w-md mx-4 sm:mx-auto shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
         <CardHeader className="text-center space-y-6 pb-8">
           <img src={logo} alt="ROVEX" className="h-28 mx-auto" />
           <div>
-            <CardTitle className="text-4xl font-bold text-gray-900">Change Password</CardTitle>
-            <CardDescription className="text-gray-600 text-lg">
+            <CardTitle className="text-4xl font-bold">Change Password</CardTitle>
+            <CardDescription className="text-lg">
               You must set a new password to continue
             </CardDescription>
           </div>
@@ -153,13 +149,12 @@ const ChangePassword = () => {
           <Button
             onClick={handleChangePassword}
             disabled={loading}
-            className="w-full h-12 text-lg bg-cyan-500 hover:bg-cyan-600"
+            className="w-full h-12 text-lg bg-primary hover:bg-primary/90"
           >
             {loading ? "Updating..." : "Update Password"}
           </Button>
         </CardContent>
       </Card>
-    </div>
   );
 };
 

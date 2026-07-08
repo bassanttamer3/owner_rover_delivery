@@ -38,7 +38,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6 pt-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="text-muted-foreground mt-1">Welcome to your rover delivery control panel</p>
       </div>
 
@@ -105,7 +105,7 @@ const Dashboard = () => {
         <CardContent>
           <div className="space-y-3">
             {rovers.slice(0, 5).map((r) => (
-              <div key={r.id} className="flex justify-between py-2 border-b border-border last:border-0">
+              <div key={r.id} className="flex flex-col gap-2 sm:flex-row sm:justify-between py-2 border-b border-border last:border-0">
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-2 h-2 rounded-full ${

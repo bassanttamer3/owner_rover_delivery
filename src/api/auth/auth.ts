@@ -20,8 +20,8 @@ export function forgotPassword(data: ForgotPasswordInterface, path: LoginPath) {
   return API.post(`/auth/${path}/forgot-password`, data);
 }
 
-export function resetPassword(data: ResetPasswordInterface) {
-  return API.post("/auth/fleet/reset-password", data);
+export function resetPassword(path: LoginPath, data: ResetPasswordInterface) {
+  return API.post(`/auth/${path}/reset-password`, data);
 }
 
 export function logout() {

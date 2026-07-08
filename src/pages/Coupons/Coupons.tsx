@@ -25,7 +25,7 @@ import {
 
 import { listCoupons, updateCoupon } from "@/api/coupons/coupons";
 import { ICoupon } from "@/common/interfaces/coupons/coupons.interface";
-import { getUser } from "@/lib/auth-storage"; 
+import { getUser } from "@/lib/auth-storage";
 import CreateCouponModal from "./CreateCouponModal";
 import { useNavigate } from "react-router-dom";
 
@@ -33,7 +33,7 @@ function CouponStatus({ isDeleted, expirationDate }: { isDeleted: boolean, expir
   const isExpired = new Date(expirationDate) < new Date();
   if (isDeleted) return <Badge variant="destructive" className="text-[11px] font-normal">Deleted</Badge>;
   if (isExpired) return <Badge variant="secondary" className="text-[11px] font-normal">Expired</Badge>;
-  
+
   return (
     <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-[11px] font-normal border">
       Active
@@ -46,7 +46,7 @@ const Coupons = () => {
   const [loading, setLoading] = useState(true);
   const [searchCode, setSearchCode] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  
+
   // Confirmation Dialog State
   const [couponToDelete, setCouponToDelete] = useState<string | null>(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -59,17 +59,17 @@ const Coupons = () => {
   setLoading(true);
   try {
     const user = getUser() as any;
-    const companyId = user?.company?._id; 
-    
+    const companyId = user?.company?._id;
+
     // Using 'any' to bypass strict interface mismatches with nested API data
     const response: any = await listCoupons(companyId);
 
-    // Based on your network preview: 
+    // Based on your network preview:
     // response.data (Axios) -> .data (Server Object) -> .data (Actual Array)
-    const actualCoupons = response?.data?.data?.data || []; 
-    
+    const actualCoupons = response?.data?.data?.data || [];
+
     console.log("API Array Check:", actualCoupons);
-    
+
     // Ensure state is always an array to prevent .filter() errors
     setCoupons(Array.isArray(actualCoupons) ? actualCoupons : []);
 
@@ -106,7 +106,7 @@ const Coupons = () => {
     fetchCoupons();
   }, []);
 
-  const filteredCoupons = coupons.filter(coupon => 
+  const filteredCoupons = coupons.filter(coupon =>
     !coupon.is_deleted &&
     coupon.code.toLowerCase().includes(searchCode.toLowerCase())
   );
@@ -116,7 +116,7 @@ const Coupons = () => {
       {/* Header */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-          <TicketPercent className="h-7 w-7 text-[#2ec8cf]" />
+          {/* <TicketPercent className="h-7 w-7 text-[#2ec8cf]" /> */}
           Coupons
         </h1>
         <p className="text-muted-foreground text-sm">
@@ -125,15 +125,15 @@ const Coupons = () => {
       </div>
 
       <Card className="border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between space-y-0 pb-4 bg-muted/20 border-b border-border/50">
           <div>
             <CardTitle className="text-base font-semibold">All Coupons</CardTitle>
             <CardDescription>{filteredCoupons.length} coupons retrieved</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
+            <Button
               onClick={() => setShowCreateModal(true)}
-              className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white shadow-sm" 
+              className="bg-[#2ec8cf] hover:bg-[#2ec8cf]/90 text-white shadow-sm"
               size="sm"
             >
               <PlusCircle className="w-4 h-4 mr-2" />
@@ -148,10 +148,10 @@ const Coupons = () => {
                 onChange={(e) => setSearchCode(e.target.value)}
               />
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={fetchCoupons} 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchCoupons}
               disabled={loading}
               className="border-[#2ec8cf]/50 text-[#2ec8cf] hover:bg-[#2ec8cf]/10"
             >
@@ -182,8 +182,8 @@ const Coupons = () => {
                   <tr><td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">No records found.</td></tr>
                 ) : (
                   filteredCoupons.map((coupon) => (
-                    <tr 
-                      key={coupon._id} 
+                    <tr
+                      key={coupon._id}
                       className="hover:bg-muted/30 transition-colors group cursor-pointer"
                       onClick={() => navigate(`/coupons/${coupon._id}`)}
                     >
@@ -210,9 +210,9 @@ const Coupons = () => {
                       </td>
                       <td className="px-4 py-4 text-right">
                         {!coupon.is_deleted && (
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -238,13 +238,13 @@ const Coupons = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will mark the coupon <span className="font-bold text-foreground">{couponToDelete}</span> as deleted. 
+              This will mark the coupon <span className="font-bold text-foreground">{couponToDelete}</span> as deleted.
               Users will no longer be able to use it.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleteLoading}>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
                 confirmDelete();
@@ -258,10 +258,10 @@ const Coupons = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <CreateCouponModal 
-        open={showCreateModal} 
-        onOpenChange={setShowCreateModal} 
-        onSuccess={fetchCoupons} 
+      <CreateCouponModal
+        open={showCreateModal}
+        onOpenChange={setShowCreateModal}
+        onSuccess={fetchCoupons}
       />
     </div>
   );

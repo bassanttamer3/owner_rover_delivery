@@ -32,6 +32,13 @@ import Products from "@/pages/Products/Products";
 import ProductDetails from "@/pages/Products/Details";
 import Coupons from "@/pages/Coupons/Coupons";
 import CouponProfile from "@/pages/Coupons/CouponProfile";
+import Customers from "@/pages/Customers/Customers";
+import CustomerProfile from "@/pages/Customers/CustomerProfile";
+import Payments from "@/pages/Payments/Payments";
+import Transactions from "@/pages/Transactions/Transactions";
+import SubscriptionsList from "@/pages/Subscriptions/Subscriptions";
+import SubscriptionDetails from "@/pages/Subscriptions/SubscriptionDetails";
+
 
 
 function RootLayout() {
@@ -58,7 +65,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, path: "login", element: <Login /> },
           { path: ":loginType/forget-password", element: <ForgetPassword /> },
-          { path: "reset-password", element: <RestPassword /> },
+          { path: ":loginType/reset-password", element: <RestPassword /> },
           { path: "change-password", element: <ChangePassword /> },
         ],
       },
@@ -89,7 +96,12 @@ export const router = createBrowserRouter([
               { path: "products/:product_id", element: <ProductDetails /> },
               { path: "coupons", element: <Coupons /> },
               { path: "coupons/:id", element: <CouponProfile /> },
-
+              { path: "customers", element: <Customers /> },
+              { path: "customers/:customer_id", element: <CustomerProfile /> },
+              { path: "payments", element: <Payments /> },
+              { path: "transactions", element: <Transactions /> },
+              { path: "subscriptions", element: <SubscriptionsList /> },
+              { path: "subscriptions/:subscription_id", element: <SubscriptionDetails /> },
             ],
           },
         ],

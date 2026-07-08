@@ -9,3 +9,5 @@ export * from "./company-users/company-users";
 export * from "./profile-management/profile-management";
 export * from "./ecommerce-base-api";
 export * from "./orders/orders";
+export * from "./subscriptions/subscriptions";
+export * from "./transactions/transactions";

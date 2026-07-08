@@ -11,33 +11,50 @@ import {
 import RoverCard from "@/components/RoverCard";
 import MapPanel from "@/components/MapPanel";
 import type { RoverForMap } from "@/components/MapPanel";
-import mockRovers from "@/data/mockrovers.json";
 import { useApp } from "@/contexts/AppContext";
-import { Card } from "@/components/ui/card";
+import { useTelemetry } from "@/hooks/useTelemetry";
 
 const LiveTracking = () => {
   const { selectedRover, setSelectedRover } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const roversData = mockRovers as RoverForMap[];
+  const { rovers } = useTelemetry();
+
+  const roversData: RoverForMap[] = rovers.map((r) => ({
+    id: r.roverId,
+    name: r.name || `Rover ${r.roverId}`,
+    status: r.status || "idle",
+    lat: r.lat,
+    lng: r.lng,
+    battery: r.battery ?? 0,
+    bearing: r.bearing ?? 0,
+    startLat: r.startLat,
+    startLng: r.startLng,
+    endLat: r.endLat,
+    endLng: r.endLng,
+  }));
   
   const filteredRovers = roversData.filter((rover) => {
     const matchesSearch =
       rover.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       rover.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || rover.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    
+    if (statusFilter === "all") return matchesSearch;
+    if (statusFilter === "active") return matchesSearch && (rover.status === "moving" || rover.status === "arrived");
+    if (statusFilter === "idle") return matchesSearch && (rover.status === "idle" || rover.status === "paused");
+    if (statusFilter === "problem") return matchesSearch && rover.status === "error";
+    
+    return matchesSearch;
   });
 
   return (
     <div className="space-y-6 pt-6 max-w-[1600px] mx-auto">
-      {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Navigation2 className="w-6 h-6 text-[#2ec8cf] animate-pulse" />
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Live Tracking</h1>
+            {/* <Navigation2 className="w-6 h-6 text-[#2ec8cf] animate-pulse" /> */}
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Live Tracking</h1>
           </div>
           <p className="text-muted-foreground flex items-center gap-2">
             <span className="relative flex h-2 w-2">
@@ -49,15 +66,13 @@ const LiveTracking = () => {
         </div>
       </div>
 
-      <div className="h-[calc(100vh-14rem)] grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Map View Area (Takes 3 columns now for better visibility) */}
-        <div className="lg:col-span-3 rounded-2xl overflow-hidden shadow-2xl border bg-background relative group">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:h-[calc(100vh-14rem)]">
+        <div className="lg:col-span-3 rounded-2xl overflow-hidden shadow-2xl border bg-background relative group min-h-[280px] h-[45vh] sm:h-[50vh] lg:h-full">
           <MapPanel
-            rovers={roversData}
+            rovers={filteredRovers}
             selectedRover={selectedRover as RoverForMap | null}
             onMarkerClick={(rover) => setSelectedRover(rover)}
           />
-          {/* Overlay info for selected rover */}
           {selectedRover && (
             <div className="absolute bottom-6 left-6 bg-background/90 backdrop-blur-md p-4 rounded-xl border border-primary/20 shadow-2xl z-[1000] animate-in slide-in-from-bottom-5 duration-300 max-w-xs">
               <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Focusing on:</p>
@@ -67,16 +82,15 @@ const LiveTracking = () => {
           )}
         </div>
 
-        {/* Control Panel (Sidebar) */}
-        <div className="lg:col-span-1 rounded-2xl border bg-gradient-to-br from-background to-[#2ec8cf]/5 shadow-xl flex flex-col overflow-hidden">
+        <div className="lg:col-span-1 rounded-2xl border bg-gradient-to-br from-background to-[#2ec8cf]/5 shadow-xl flex flex-col overflow-hidden min-h-[280px] max-h-[55vh] lg:max-h-none lg:h-full">
           <div className="p-5 border-b space-y-5 bg-background/50 backdrop-blur-sm">
             <h2 className="text-xl font-bold flex items-center gap-2">
               Fleet Control
               <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                {roversData.length} TOTAL
+                {filteredRovers.length} TOTAL
               </span>
             </h2>
-            
+
             <div className="space-y-3">
               <div className="relative group">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-[#2ec8cf] transition-colors" />
@@ -87,7 +101,7 @@ const LiveTracking = () => {
                   className="pl-10 bg-background/50 focus-visible:ring-[#2ec8cf]"
                 />
               </div>
-              
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="bg-background/50">
                   <SelectValue placeholder="Status: All" />
@@ -101,23 +115,21 @@ const LiveTracking = () => {
               </Select>
             </div>
 
-            {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: 'Active', icon: Truck, color: 'text-green-500', bg: 'bg-green-500/10', status: 'active' },
-                { label: 'Idle', icon: MapPin, color: 'text-yellow-500', bg: 'bg-yellow-500/10', status: 'idle' },
-                { label: 'Issue', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', status: 'problem' },
+                { label: 'Active', icon: Truck, color: 'text-green-500', bg: 'bg-green-500/10', check: (s: string) => s === "moving" || s === "arrived" },
+                { label: 'Idle', icon: MapPin, color: 'text-yellow-500', bg: 'bg-yellow-500/10', check: (s: string) => s === "idle" || s === "paused" },
+                { label: 'Issue', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', check: (s: string) => s === "error" },
               ].map((stat) => (
                 <div key={stat.label} className={`p-2 rounded-lg ${stat.bg} border border-transparent hover:border-current/20 transition-all text-center`}>
                   <stat.icon className={`w-4 h-4 mx-auto ${stat.color} mb-1`} />
-                  <p className="text-md font-black">{roversData.filter((r) => r.status === stat.status).length}</p>
+                  <p className="text-md font-black">{roversData.filter((r) => stat.check(r.status)).length}</p>
                   <span className="text-[9px] uppercase font-bold text-muted-foreground">{stat.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* List Section */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/40">
             {filteredRovers.length ? (
               filteredRovers.map((rover) => (
@@ -125,8 +137,8 @@ const LiveTracking = () => {
                   key={rover.id}
                   onClick={() => setSelectedRover(rover)}
                   className={`transition-all duration-300 rounded-xl cursor-pointer hover:translate-x-1 ${
-                    (selectedRover as RoverForMap)?.id === rover.id 
-                    ? "ring-2 ring-[#2ec8cf] shadow-lg bg-[#2ec8cf]/5" 
+                    (selectedRover as RoverForMap)?.id === rover.id
+                    ? "ring-2 ring-[#2ec8cf] shadow-lg bg-[#2ec8cf]/5"
                     : "hover:bg-accent"
                   }`}
                 >

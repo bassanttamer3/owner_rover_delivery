@@ -69,26 +69,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-cyan-100" />
-      <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-300/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm z-10">
-        <CardHeader className="text-center space-y-8 pb-10">
-          <img src={logo} alt="ROVEX" className="h-28 mx-auto" />
+      <Card className="w-full max-w-md mx-4 sm:mx-auto shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
+        <CardHeader className="text-center space-y-6 sm:space-y-8 pb-8 sm:pb-10">
+          <img src={logo} alt="ROVEX" className="h-20 sm:h-28 mx-auto" />
           <div>
-            <CardTitle className="text-4xl font-bold text-gray-900">Welcome Back</CardTitle>
-            <CardDescription className="text-gray-600 text-lg">Sign in to ROVEX Platform</CardDescription>
+            <CardTitle className="text-2xl sm:text-4xl font-bold">Welcome Back</CardTitle>
+            <CardDescription className="text-lg">Sign in to ROVEX Platform</CardDescription>
           </div>
           <div className="flex gap-3">
             <Button
-              className={loginType === "fleet" ? "bg-cyan-500 hover:bg-cyan-600 w-full" : "bg-gray-100 text-gray-700 hover:bg-gray-200 w-full"}
+              className={loginType === "fleet" ? "bg-primary hover:bg-primary/90 w-full" : "bg-secondary text-secondary-foreground hover:bg-secondary/80 w-full"}
               onClick={() => setLoginType("fleet")}
             >
               Fleet Owner
             </Button>
             <Button
-              className={loginType === "company" ? "bg-cyan-500 hover:bg-cyan-600 w-full" : "bg-gray-100 text-gray-700 hover:bg-gray-200 w-full"}
+              className={loginType === "company" ? "bg-primary hover:bg-primary/90 w-full" : "bg-secondary text-secondary-foreground hover:bg-secondary/80 w-full"}
               onClick={() => setLoginType("company")}
             >
               Company
@@ -118,7 +114,7 @@ const Login = () => {
           <Button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full h-12 text-lg bg-cyan-500 hover:bg-cyan-600"
+            className="w-full h-12 text-lg bg-primary hover:bg-primary/90"
           >
             {loading ? "Logging in..." : "Login"}
           </Button>
@@ -126,14 +122,13 @@ const Login = () => {
         <CardFooter className="justify-center">
           <Link
             to={`/${loginType}/forget-password`}
-            className="text-sm text-cyan-600 hover:text-cyan-700 hover:underline"
+            className="text-sm text-primary hover:text-primary/90 hover:underline"
           >
             Forgot password?
           </Link>
 
         </CardFooter>
       </Card>
-    </div>
   );
 };
 
