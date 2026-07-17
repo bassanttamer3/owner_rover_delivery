@@ -14,11 +14,7 @@ const MainPage = () => {
   const navigate = useNavigate();
   const { setSelectedRover: setGlobalRover } = useApp();
 
-  const pieData = [
-    { name: "Active", value: (mockRovers as { status: string }[]).filter((r) => r.status === "active").length },
-    { name: "Idle", value: (mockRovers as { status: string }[]).filter((r) => r.status === "idle").length },
-    { name: "Problem", value: (mockRovers as { status: string }[]).filter((r) => r.status === "problem").length },
-  ];
+
 
   const COLORS = ["#2ec8cf", "#FBBF24", "#F87171"];
 
@@ -91,54 +87,6 @@ const MainPage = () => {
         </div>
       </section>
 
-      {/* Fleet Insights Section */}
-      <section className="relative py-10 sm:py-12 px-4 sm:px-8 mx-0 sm:mx-4 bg-gradient-to-r from-[#2ec8cf]/20 to-[#2ec8cf]/5 rounded-3xl overflow-hidden">
-        <div className="absolute top-0 -left-16 w-96 h-96 bg-[#2ec8cf]/10 rounded-full blur-3xl -z-10" />
-        <div className="absolute bottom-0 -right-16 w-96 h-96 bg-[#2ec8cf]/20 rounded-full blur-3xl -z-10" />
-        <div className="max-w-6xl mx-auto text-center space-y-8">
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">Fleet Insights</h2>
-          <p className="text-muted-foreground text-base sm:text-lg">Get a quick overview of your fleet performance today</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { type: "active", label: "Active Rovers", Icon: Truck, colorFrom: "from-[#2ec8cf]/10", colorTo: "to-[#2ec8cf]/20" },
-              { type: "idle", label: "Idle Rovers", Icon: Activity, colorFrom: "from-yellow-100", colorTo: "to-yellow-200" },
-              { type: "problem", label: "Problem Rovers", Icon: Package, colorFrom: "from-red-100", colorTo: "to-red-200" },
-              { type: "order", label: "Total Orders", Icon: MapPin, colorFrom: "from-blue-100", colorTo: "to-blue-200" },
-            ].map(({ type, label, Icon, colorFrom, colorTo }, idx) => {
-              const count =
-                type === "order"
-                  ? (mockRovers as { currentOrder?: unknown }[]).filter((r) => r.currentOrder).length
-                  : (mockRovers as { status: string }[]).filter((r) => r.status === type).length;
-              return (
-                <div key={idx} className={`p-6 rounded-2xl bg-gradient-to-tr ${colorFrom} ${colorTo} shadow-lg flex flex-col items-center gap-2`}>
-                  <Icon className="w-10 h-10 text-[#2ec8cf]" />
-                  <p className="text-3xl font-bold text-foreground">{count}</p>
-                  <span className="text-sm text-muted-foreground">{label}</span>
-                  <div className="w-full h-2 bg-muted rounded-full mt-2">
-                    <div className="h-full bg-[#2ec8cf] rounded-full transition-all" style={{ width: `${(count / (mockRovers as unknown[]).length) * 100}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="flex justify-center py-8">
-            <PieChart width={250} height={250}>
-              <Pie data={pieData} dataKey="value" cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${name} ${(percent! * 100).toFixed(0)}%`} labelLine={false}>
-                {pieData.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index]} stroke="#fff" strokeWidth={2} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [value, "Rovers"]} />
-            </PieChart>
-          </div>
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="mt-6 px-8 py-3 bg-[#2ec8cf] text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl hover:bg-[#2ec8cf]/90 transition-all duration-300"
-          >
-            Go to Dashboard
-          </button>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="w-full bg-[#2ec8cf] dark:bg-[#2ec8cf]/10 text-white dark:text-foreground border-t dark:border-[#2ec8cf]/20 transition-colors duration-300">

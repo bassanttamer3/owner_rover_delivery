@@ -62,4 +62,3 @@ export const useTelemetry = (companyId?: string) => {
 
   return { rovers, sendCommand };
 };
-

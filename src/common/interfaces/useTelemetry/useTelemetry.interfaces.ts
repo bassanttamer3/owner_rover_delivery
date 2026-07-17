@@ -1,4 +1,5 @@
 export interface RoverData {
+  currentOrder: Order;
   roverId: string;
   lat: number;
   lng: number;

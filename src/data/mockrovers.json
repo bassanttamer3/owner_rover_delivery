@@ -1,157 +1,79 @@
-[
-  {
-    "id": "RVR-001",
-    "name": "Rover Alpha",
-    "status": "active",
-    "battery": 85,
-    "health": "excellent",
-    "location": { "lat": 30.0444, "lng": 31.2357 },
-    "speed": 12.5,
-    "lastUpdate": "2024-01-15T10:30:00Z",
-
-    "route": [
-      { "lat": 30.0444, "lng": 31.2357 },
-      { "lat": 30.0454, "lng": 31.2377 },
-      { "lat": 30.0464, "lng": 31.2397 }
-    ],
-
+{
+  "rover-1": {
     "currentOrder": {
-      "id": "ORD-12345",
-      "from": "Warehouse A",
+      "id": "ORD-23145",
+      "from": "Central Warehouse",
       "to": "Sector C",
       "cargo": "Medical Supplies",
-      "distanceKm": 4.2,
-      "etaMinutes": 14,
+      "etaMinutes": 12,
       "status": "in-progress"
     },
-
-    "deliveryProgress": 65,
-
+    "deliveryProgress": 68,
     "history": [
-      { "id": "ORD-12290", "status": "Delivered" },
-      { "id": "ORD-12274", "status": "Delivered" },
-      { "id": "ORD-12260", "status": "Canceled" }
+      { "id": "ORD-23098", "status": "Delivered" },
+      { "id": "ORD-23076", "status": "Delivered" },
+      { "id": "ORD-23021", "status": "Delivered" }
     ]
   },
 
-  {
-    "id": "RVR-002",
-    "name": "Rover Beta",
-    "status": "idle",
-    "battery": 45,
-    "health": "good",
-    "location": { "lat": 31.2001, "lng": 29.9187 },
-    "speed": 0,
-    "lastUpdate": "2024-01-15T10:25:00Z",
-    "route": [],
-
-    "currentOrder": null,
+  "rover-2": {
+     "currentOrder": {
+      "id": "ORD-23210",
+      "from": "Hub C",
+      "to": "Sector B",
+      "cargo": "Retail Packages",
+      "etaMinutes": 5,
+      "status": "in-progress"
+    },
     "deliveryProgress": 0,
-
     "history": [
-      { "id": "ORD-12230", "status": "Delivered" }
+      { "id": "ORD-22990", "status": "Delivered" },
+      { "id": "ORD-22910", "status": "Delivered" },
+      { "id": "ORD-22875", "status": "Cancelled" }
     ]
   },
 
-  {
-    "id": "RVR-003",
-    "name": "Rover Gamma",
-    "status": "active",
-    "battery": 92,
-    "health": "excellent",
-    "location": { "lat": 30.0131, "lng": 31.2089 },
-    "speed": 15.2,
-    "lastUpdate": "2024-01-15T10:29:00Z",
-
-    "route": [
-      { "lat": 30.0131, "lng": 31.2089 },
-      { "lat": 30.0141, "lng": 31.2109 },
-      { "lat": 30.0151, "lng": 31.2129 }
-    ],
-
+  "rover-3": {
     "currentOrder": {
-      "id": "ORD-12346",
+      "id": "ORD-23188",
       "from": "Hub B",
       "to": "Sector A",
       "cargo": "Food Delivery",
-      "distanceKm": 3.1,
-      "etaMinutes": 9,
+      "etaMinutes": 7,
       "status": "in-progress"
     },
-
-    "deliveryProgress": 42,
-
+    "deliveryProgress": 45,
     "history": [
-      { "id": "ORD-12280", "status": "Delivered" },
-      { "id": "ORD-12251", "status": "Delivered" }
+      { "id": "ORD-23050", "status": "Delivered" },
+      { "id": "ORD-23011", "status": "Delivered" }
     ]
   },
 
-  {
-    "id": "RVR-004",
-    "name": "Rover Delta",
-    "status": "problem",
-    "battery": 22,
-    "health": "critical",
-    "location": { "lat": 30.0626, "lng": 31.2497 },
-    "speed": 0,
-    "lastUpdate": "2024-01-15T10:15:00Z",
-    "route": [],
-
+  "rover-4": {
     "currentOrder": {
-      "id": "ORD-12347",
-      "from": "Warehouse C",
+      "id": "ORD-23192",
+      "from": "Charging Station 2",
       "to": "Sector D",
       "cargo": "Electronics",
-      "distanceKm": 6.5,
-      "etaMinutes": 25,
-      "status": "delayed"
-    },
-
-    "deliveryProgress": 30,
-
-    "alerts": [
-      "Low battery",
-      "Motor temperature high"
-    ],
-
-    "history": [
-      { "id": "ORD-12210", "status": "Delivered" },
-      { "id": "ORD-12198", "status": "Failed" }
-    ]
-  },
-
-  {
-    "id": "RVR-005",
-    "name": "Rover Epsilon",
-    "status": "active",
-    "battery": 78,
-    "health": "good",
-    "location": { "lat": 31.2156, "lng": 29.9553 },
-    "speed": 10.8,
-    "lastUpdate": "2024-01-15T10:28:00Z",
-
-    "route": [
-      { "lat": 31.2156, "lng": 29.9553 },
-      { "lat": 31.2166, "lng": 29.9573 },
-      { "lat": 31.2176, "lng": 29.9593 }
-    ],
-
-    "currentOrder": {
-      "id": "ORD-12348",
-      "from": "Central Hub",
-      "to": "Zone F",
-      "cargo": "E-Commerce Packages",
-      "distanceKm": 5.0,
       "etaMinutes": 18,
       "status": "in-progress"
     },
-
-    "deliveryProgress": 55,
-
+    "deliveryProgress": 22,
     "history": [
-      { "id": "ORD-12270", "status": "Delivered" },
-      { "id": "ORD-12255", "status": "Delivered" }
+      { "id": "ORD-23002", "status": "Delivered" },
+      { "id": "ORD-22987", "status": "Error" },
+      { "id": "ORD-22960", "status": "Delivered" }
+    ]
+  },
+
+  "rover-5": {
+    "currentOrder": null,
+    "deliveryProgress": 81,
+    "history": [
+      { "id": "ORD-23100", "status": "Delivered" },
+      { "id": "ORD-23070", "status": "Delivered" },
+      { "id": "ORD-23020", "status": "Delivered" },
+      { "id": "ORD-22999", "status": "Cancelled" }
     ]
   }
-]
+}

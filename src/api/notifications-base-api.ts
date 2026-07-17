@@ -5,15 +5,20 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((config) => {
- const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem("access_token");
   const userId = localStorage.getItem("userId");
+  const companyId = localStorage.getItem("companyId");
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  if (userId) {
-    config.headers["x-user-id"] = userId;
+  const effectiveUserId = (localStorage.getItem("role") === "company") 
+    ? companyId 
+    : userId;
+
+  if (effectiveUserId) {
+    config.headers["x-user-id"] = effectiveUserId;
   }
 
   return config;

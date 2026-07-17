@@ -49,7 +49,8 @@ const Sidebar = () => {
     userType === "company"
       ? menuItems.filter(
           (item) =>
-            item.path !== "/fleet-operators" && item.path !== "/Companies"
+            item.path !== "/fleet-operators" && item.path !== "/Companies" && item.path !== "/activity-logs" 
+
         )
       : userType === "fleet"
         ? menuItems.filter(
@@ -60,7 +61,8 @@ const Sidebar = () => {
           item.path !== "/orders" &&
           item.path !== "/customers" &&
           item.path !== "/payments" &&
-          item.path !== "/subscriptions"
+          item.path !== "/subscriptions" &&
+          item.path !== "/activity-logs" 
         )
         : menuItems;
 

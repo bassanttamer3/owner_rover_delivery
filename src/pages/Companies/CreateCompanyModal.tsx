@@ -944,33 +944,29 @@ const CreateCompanyModal = ({ open, onOpenChange, onSuccess }: CreateCompanyModa
                     align="start"
                   >
                     <div className="max-h-60 overflow-auto space-y-2">
-                      {(mockRovers as { id: string; name: string }[]).map(
-                        (rover) => (
-                          <label
-                            key={rover.id}
-                            className="flex items-center gap-2 cursor-pointer rounded-sm px-2 py-1.5 hover:bg-muted/50 text-sm"
-                          >
-                            <Checkbox
-                              checked={form.assigned_rovers.includes(rover.id)}
-                              onCheckedChange={(checked) => {
-                                setForm({
-                                  ...form,
-                                  assigned_rovers: checked
-                                    ? [...form.assigned_rovers, rover.id]
-                                    : form.assigned_rovers.filter(
-                                        (id) => id !== rover.id
-                                      ),
-                                });
-                              }}
-                            />
-                            <span className="truncate">{rover.name}</span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
-                              {rover.id}
-                            </span>
-                          </label>
-                        )
-                      )}
-                    </div>
+  {Object.entries(mockRovers).map(([id, rover]: [string, any]) => (
+    <label
+      key={id}
+      className="flex items-center gap-2 cursor-pointer rounded-sm px-2 py-1.5 hover:bg-muted/50 text-sm"
+    >
+      <Checkbox
+        checked={form.assigned_rovers.includes(id)}
+        onCheckedChange={(checked) => {
+          setForm({
+            ...form,
+            assigned_rovers: checked
+              ? [...form.assigned_rovers, id]
+              : form.assigned_rovers.filter((roverId) => roverId !== id),
+          });
+        }}
+      />
+      <span className="truncate">{rover.name}</span>
+      <span className="text-[10px] text-muted-foreground font-mono">
+        {id}
+      </span>
+    </label>
+  ))}
+</div>
                   </PopoverContent>
                 </Popover>
                 <p className="text-[10px] text-muted-foreground">
