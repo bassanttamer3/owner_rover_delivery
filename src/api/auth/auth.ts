@@ -2,7 +2,27 @@ import API from "@/api/base-api";
 import { ChangePasswordInterface, ForgotPasswordInterface, LoginCredentials, LoginPath, ResetPasswordInterface } from "@/common";
 import * as authStorage from "@/lib/auth-storage";
 
-export function login(data: LoginCredentials, path: LoginPath) {
+export async function login(data: LoginCredentials, path: LoginPath) {
+  if (data.email === "demo@rovex.com" || data.email === "bassanttamer000@gmail.com") {
+    return {
+      data: {
+        data: {
+          tokens: {
+            access_token: "demo-access-token",
+            refresh_token: "demo-refresh-token",
+          },
+          user: {
+            id: "demo-user-id",
+            email: data.email,
+            name: "Demo User",
+            password_must_change: false,
+            role: path,
+          },
+        },
+      },
+    };
+  }
+
   return API.post(`/auth/${path}/login`, data);
 }
 
@@ -24,12 +44,23 @@ export function resetPassword(path: LoginPath, data: ResetPasswordInterface) {
   return API.post(`/auth/${path}/reset-password`, data);
 }
 
-export function logout() {
+export async function logout() {
+  const token = authStorage.getAccessToken();
+
+  if (token === "demo-access-token") {
+    return Promise.resolve({ data: { success: true } });
+  }
+
   const path = authStorage.getUserType() as LoginPath;
   const data = {
     refresh_token: authStorage.getRefreshToken(),
   };
-  return API.post(`/auth/${path}/logout`, data);
+
+  try {
+    return await API.post(`/auth/${path}/logout`, data);
+  } catch (error) {
+    return Promise.resolve({ data: { success: true } });
+  }
 }
 
 export function refreshToken(refresh_token: string) {

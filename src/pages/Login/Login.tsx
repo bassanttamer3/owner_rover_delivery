@@ -67,6 +67,26 @@ const Login = () => {
       setLoading(false);
     }
   };
+  const handleDemoLogin = async () => {
+    setEmail("demo@rovex.com");
+    setPassword("demo12345");
+    setLoading(true);
+    try {
+      const response = await login({ email: "demo@rovex.com", password: "demo12345" }, loginType);
+      const { user, tokens } = response.data.data;
+      setAuth(
+        { access_token: tokens.access_token, refresh_token: tokens.refresh_token },
+        user as AuthUser,
+        loginType
+      );
+      toast.success("Demo login successful");
+      navigate("/dashboard", { replace: true });
+    } catch {
+      toast.error("Demo login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
       <Card className="w-full max-w-md mx-4 sm:mx-auto shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
@@ -118,6 +138,15 @@ const Login = () => {
           >
             {loading ? "Logging in..." : "Login"}
           </Button>
+          <Button
+          type="button"
+          variant="outline"
+          onClick={handleDemoLogin}
+          disabled={loading}
+          className="w-full h-12 text-md border-primary text-primary hover:bg-primary/10"
+        >
+        Demo Access
+        </Button>
         </CardContent>
         <CardFooter className="justify-center">
           <Link
